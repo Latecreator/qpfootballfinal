@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fantasy Season Builder — Quick Play Football</title>
+<script src="football-data.js"></script>
+<style>
+:root {
+  --bg:#0d1117; --surface:#161b22; --surface2:#21262d;
+  --border:#30363d; --green:#1a8a2e; --green2:#2ea043;
+  --red:#da3633; --yellow:#b08800; --blue:#1f6feb;
+  --text:#c9d1d9; --dim:#8b949e; --white:#f0f6fc;
+  --elite:#c9860a; --strong:#2ea043; --average:#1f6feb;
+  --weak:#6e40c9; --basement:#da3633;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;padding:16px 16px 48px}
+
+/* Header */
+.hdr{text-align:center;margin-bottom:28px}
+.hdr h1{font-size:1.9rem;font-weight:800;color:var(--white);letter-spacing:3px;text-transform:uppercase}
+.hdr p{color:var(--dim);font-size:0.82rem;margin-top:4px}
+.back-link{display:inline-block;color:var(--dim);font-size:0.8rem;text-decoration:none;margin-bottom:16px;letter-spacing:.5px}
+.back-link:hover{color:var(--text)}
+
+/* Tabs */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px;max-width:960px;margin-left:auto;margin-right:auto}
+.tab{padding:10px 22px;cursor:pointer;font-size:0.88rem;font-weight:600;color:var(--dim);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s}
+.tab.active{color:var(--white);border-bottom-color:var(--green)}
+.tab:hover:not(.active){color:var(--text)}
+.tab-pane{display:none;max-width:960px;margin:0 auto}
+.tab-pane.show{display:block}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:18px}
+.card-title{font-size:0.72rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);margin-bottom:14px;font-weight:600}
+
+/* Buttons */
+.btn{background:var(--green);color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:0.92rem;font-weight:600;cursor:pointer;transition:background .15s;letter-spacing:.3px}
+.btn:hover{background:var(--green2)}
+.btn:disabled{background:var(--surface2);color:var(--dim);cursor:not-allowed}
+.btn-blue{background:var(--blue)}.btn-blue:hover{background:#388bfd}
+.btn-sm{padding:6px 14px;font-size:0.82rem}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--text);background:var(--surface2)}
+.btn-red{background:var(--red)}.btn-red:hover{background:#f85149}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* Form elements */
+label{display:block;font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-bottom:5px;margin-top:12px}
+label:first-child{margin-top:0}
+select,input[type=text],input[type=number]{width:100%;background:var(--surface2);color:var(--white);border:1px solid var(--border);border-radius:6px;padding:8px 11px;font-size:0.93rem;cursor:pointer}
+select:focus,input:focus{outline:2px solid var(--green);outline-offset:1px}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button{opacity:1}
+
+/* Browser filter row */
+.filter-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px}
+.filter-row .f-grp{display:flex;flex-direction:column;min-width:140px}
+.filter-row .f-grp label{margin-top:0}
+.filter-row .f-grp select{width:auto;min-width:140px}
+.browser-info{font-size:0.8rem;color:var(--dim);margin-bottom:10px}
+
+/* Random row */
+.rand-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.rand-row .f-grp{display:flex;flex-direction:column;min-width:120px}
+.rand-row .f-grp label{margin-top:0}
+.rand-row .f-grp select,
+.rand-row .f-grp input{width:auto;min-width:80px}
+.rand-msg{font-size:0.8rem;color:var(--green);margin-left:8px;align-self:center}
+
+/* Browser table */
+.browser-table{width:100%;border-collapse:collapse;font-size:0.85rem}
+.browser-table th{font-size:0.67rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;font-weight:600}
+.browser-table th.c{text-align:center}
+.browser-table td{padding:7px 10px;border-bottom:1px solid var(--surface2);color:var(--text);vertical-align:middle}
+.browser-table td.c{text-align:center}
+.browser-table tbody tr:hover{background:var(--surface2)}
+
+/* League table */
+.league-table{width:100%;border-collapse:collapse;font-size:0.85rem}
+.league-table th{font-size:0.67rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;font-weight:600}
+.league-table th.c{text-align:center}
+.league-table td{padding:7px 10px;border-bottom:1px solid var(--surface2);color:var(--text);vertical-align:middle}
+.league-table td.c{text-align:center;font-weight:600;color:var(--white)}
+.league-table tbody tr:hover{background:var(--surface2)}
+.del-btn{background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:1rem;padding:2px 6px;border-radius:4px}
+.del-btn:hover{background:var(--red);color:#fff}
+
+/* Inline editable inputs */
+.conf-inp,.abbr-inp{background:var(--surface2);border:1px solid var(--border);border-radius:4px;color:var(--white);padding:3px 7px;font-size:0.82rem}
+.conf-inp{width:90px}
+.abbr-inp{width:68px}
+.conf-inp:focus,.abbr-inp:focus{outline:1px solid var(--green);outline-offset:1px}
+
+/* Empty state */
+.empty{text-align:center;padding:32px;color:var(--dim);font-size:0.88rem}
+
+/* Divider */
+.divider{border:none;border-top:1px solid var(--border);margin:18px 0}
+
+@media(max-width:640px){
+  .filter-row,.rand-row{flex-direction:column;align-items:stretch}
+  .filter-row .f-grp,.rand-row .f-grp{min-width:unset}
+  .filter-row .f-grp select,.rand-row .f-grp select,.rand-row .f-grp input{width:100%}
+}
+</style>
+</head>
+<body>
+
+<a class="back-link" href="index.html" onclick="if(window.parent!==window){window.parent.postMessage('goto:home','*');return false;}">← Back to QP Football</a>
+
+<div class="hdr">
+  <h1>Fantasy Season Builder</h1>
+  <p>Browse 100+ years of football history. Pick teams from any era or league. Export to CSV and import into the game.</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="browse" onclick="showTab('browse')">Browse Database</div>
+  <div class="tab" data-tab="league" onclick="showTab('league')">Your League (0)</div>
+</div>
+
+<!-- ══ TAB 1: BROWSE ══ -->
+<div id="pane-browse" class="tab-pane show">
+
+  <div class="card">
+    <div class="card-title">Browse Database</div>
+    <div class="filter-row">
+      <div class="f-grp">
+        <label>League</label>
+        <select id="browse-league" onchange="onLeagueChange()"></select>
+      </div>
+      <div class="f-grp">
+        <label>Year</label>
+        <select id="browse-year"></select>
+      </div>
+      <button class="btn" onclick="loadTeamBrowser()">Load</button>
+    </div>
+    <div class="browser-info" id="browser-info">Select a league and year above, then click Load.</div>
+    <div style="overflow-x:auto">
+      <table class="browser-table">
+        <thead>
+          <tr>
+            <th>Team</th>
+            <th class="c">OFF</th>
+            <th class="c">DEF</th>
+            <th class="c">CGF</th>
+            <th class="c" style="width:100px">Add</th>
+          </tr>
+        </thead>
+        <tbody id="browser-tbody">
+          <tr><td colspan="5" class="empty">Load a season to browse teams.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Random Pick</div>
+    <div class="rand-row">
+      <div class="f-grp">
+        <label>League</label>
+        <select id="rand-league" onchange="onRandLeagueChange()"></select>
+      </div>
+      <div class="f-grp">
+        <label>Year</label>
+        <select id="rand-year"></select>
+      </div>
+      <div class="f-grp">
+        <label>Teams</label>
+        <input type="number" id="rand-count" value="6" min="1" max="64" style="width:70px">
+      </div>
+      <button class="btn" onclick="rollRandom()">Roll</button>
+      <span class="rand-msg" id="rand-msg"></span>
+    </div>
+    <p style="font-size:0.78rem;color:var(--dim);margin-top:10px">Sets both dropdowns to "Any" for a truly random cross-era pick. Appends to your current roster — does not clear it.</p>
+  </div>
+
+</div>
+
+<!-- ══ TAB 2: YOUR LEAGUE ══ -->
+<div id="pane-league" class="tab-pane">
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div class="card-title" style="margin-bottom:0">Your Fantasy League</div>
+      <div class="btn-row">
+        <button class="btn" onclick="exportCSV()">Export CSV</button>
+        <button class="btn btn-red btn-sm" onclick="clearLeague()">Clear All</button>
+      </div>
+    </div>
+    <p style="font-size:0.78rem;color:var(--dim);margin-bottom:12px">Edit Conf and Abbr inline. Export CSV imports directly into Quick Play Football via Setup → Import CSV.</p>
+    <div style="overflow-x:auto">
+      <table class="league-table">
+        <thead>
+          <tr>
+            <th class="c" style="width:36px">#</th>
+            <th>Team</th>
+            <th>Era</th>
+            <th class="c">OFF</th>
+            <th class="c">DEF</th>
+            <th class="c">CGF</th>
+            <th>Conf</th>
+            <th>Abbr</th>
+            <th class="c" style="width:40px"></th>
+          </tr>
+        </thead>
+        <tbody id="league-tbody">
+          <tr><td colspan="9" class="empty">No teams yet. Add teams from the Browse tab.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let fantasyLeague = []; // [{name, abbr, off, def, cgf, conf, era, leagueKey, year}]
+let currentBrowseLeague = '';
+let currentBrowseYear = '';
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function getTeamsForLeagueYear(leagueKey, yr) {
+  const seasons = (LEAGUE_REGISTRY[leagueKey] || {}).data;
+  if (!seasons) return [];
+  return seasons[String(yr)] || [];
+}
+
+function getYearsForLeague(leagueKey) {
+  const data = (LEAGUE_REGISTRY[leagueKey] || {}).data;
+  if (!data) return [];
+  return Object.keys(data).map(Number).sort((a, b) => b - a);
+}
+
+function makeAbbr(name) {
+  return name.split(/\s+/).map(w => w[0] || '').join('').toUpperCase().slice(0, 4);
+}
+
+function uniqueAbbr(base, year) {
+  const existing = new Set(fantasyLeague.map(t => t.abbr));
+  if (!existing.has(base)) return base;
+  const suffix = String(year).slice(-2);
+  let candidate = (base + suffix).slice(0, 5);
+  let i = 2;
+  while (existing.has(candidate)) {
+    candidate = (base + suffix + i).slice(0, 6);
+    i++;
+  }
+  return candidate;
+}
+
+// ══════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('show', p.id === 'pane-' + name));
+}
+
+// ══════════════════════════════════════════════
+// BROWSE TAB
+// ══════════════════════════════════════════════
+function populateLeagueDrop() {
+  const sel = document.getElementById('browse-league');
+  sel.innerHTML = Object.keys(LEAGUE_REGISTRY).map(k =>
+    `<option value="${k}">${LEAGUE_REGISTRY[k].label}</option>`
+  ).join('');
+}
+
+function onLeagueChange() {
+  const key = document.getElementById('browse-league').value;
+  const years = getYearsForLeague(key);
+  document.getElementById('browse-year').innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+}
+
+function loadTeamBrowser() {
+  const leagueKey = document.getElementById('browse-league').value;
+  const year = document.getElementById('browse-year').value;
+  if (!leagueKey || !year) return;
+  currentBrowseLeague = leagueKey;
+  currentBrowseYear = year;
+  renderBrowser();
+}
+
+function renderBrowser() {
+  if (!currentBrowseLeague || !currentBrowseYear) return;
+  const teams = getTeamsForLeagueYear(currentBrowseLeague, currentBrowseYear);
+  const info = document.getElementById('browser-info');
+  const tbody = document.getElementById('browser-tbody');
+
+  if (!teams || teams.length === 0) {
+    info.textContent = 'No teams found.';
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">No teams for this selection.</td></tr>';
+    return;
+  }
+
+  info.textContent = `Showing ${teams.length} team${teams.length !== 1 ? 's' : ''} — ${currentBrowseLeague} ${currentBrowseYear}`;
+  const addedSet = new Set(fantasyLeague.map(t => t.name + '|' + t.era));
+
+  // Store teams array on window so onclick handlers can reference by index
+  window._browserTeams = teams;
+  tbody.innerHTML = teams.map((t, i) => {
+    const name = t.n;
+    const era = `${currentBrowseLeague} ${currentBrowseYear}`;
+    const added = addedSet.has(name + '|' + era);
+    const addBtn = added
+      ? `<button class="btn btn-sm" disabled style="background:var(--surface2);color:var(--green2);border:1px solid var(--green)">Added ✓</button>`
+      : `<button class="btn btn-sm btn-blue" onclick="addTeamByIndex(${i})">+ Add</button>`;
+    return `<tr>
+      <td>${name}</td>
+      <td class="c">${t.o}</td>
+      <td class="c">${t.d}</td>
+      <td class="c">${t.c}</td>
+      <td class="c">${addBtn}</td>
+    </tr>`;
+  }).join('');
+}
+
+function addTeamByIndex(i) {
+  const t = (window._browserTeams || [])[i];
+  if (!t) return;
+  const name = t.n;
+  const abbr = t.a || makeAbbr(name);
+  addTeam(name, abbr, t.o, t.d, t.c, currentBrowseLeague, parseInt(currentBrowseYear));
+}
+
+function addTeam(name, abbr, off, def, cgf, leagueKey, year) {
+  const era = `${leagueKey} ${year}`;
+  if (fantasyLeague.some(t => t.name === name && t.era === era)) return;
+  const finalAbbr = uniqueAbbr(abbr, year);
+  fantasyLeague.push({ name, abbr: finalAbbr, off, def, cgf, conf: '', era, leagueKey, year });
+  renderBrowser();
+  renderLeague();
+}
+
+function removeTeam(i) {
+  fantasyLeague.splice(i, 1);
+  renderBrowser();
+  renderLeague();
+}
+
+// ══════════════════════════════════════════════
+// RANDOM PICKER
+// ══════════════════════════════════════════════
+function populateRandLeagueDrop() {
+  const sel = document.getElementById('rand-league');
+  sel.innerHTML = '<option value="">Any league</option>' + Object.keys(LEAGUE_REGISTRY).map(k =>
+    `<option value="${k}">${LEAGUE_REGISTRY[k].label}</option>`
+  ).join('');
+}
+
+function onRandLeagueChange() {
+  const key = document.getElementById('rand-league').value;
+  const sel = document.getElementById('rand-year');
+  if (!key) {
+    sel.innerHTML = '<option value="">Any year</option>';
+    return;
+  }
+  const years = getYearsForLeague(key);
+  sel.innerHTML = '<option value="">Any year</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
+}
+
+function rollRandom() {
+  const leagueKey = document.getElementById('rand-league').value;
+  const year = document.getElementById('rand-year').value;
+  const count = Math.max(1, parseInt(document.getElementById('rand-count').value) || 6);
+  const msg = document.getElementById('rand-msg');
+
+  // Build pool
+  let pool = [];
+  const leagues = leagueKey ? [leagueKey] : Object.keys(LEAGUE_REGISTRY);
+
+  leagues.forEach(lk => {
+    const data = LEAGUE_REGISTRY[lk].data;
+    const years = year ? [year] : Object.keys(data);
+    years.forEach(yr => {
+      const teams = data[String(yr)] || [];
+      teams.forEach(t => pool.push({ t, lk, yr: parseInt(yr) }));
+    });
+  });
+
+  // Remove already-added
+  const addedSet = new Set(fantasyLeague.map(t => t.name + '|' + t.era));
+  pool = pool.filter(({ t, lk, yr }) => !addedSet.has(t.n + '|' + lk + ' ' + yr));
+
+  if (pool.length === 0) {
+    msg.textContent = 'No eligible teams available.';
+    setTimeout(() => { msg.textContent = ''; }, 3000);
+    return;
+  }
+
+  // Shuffle
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+
+  const n = Math.min(count, pool.length);
+  pool.slice(0, n).forEach(({ t, lk, yr }) => {
+    const name = t.n;
+    const abbr = t.a || makeAbbr(name);
+    const era = `${lk} ${yr}`;
+    const finalAbbr = uniqueAbbr(abbr, yr);
+    fantasyLeague.push({ name, abbr: finalAbbr, off: t.o, def: t.d, cgf: t.c, conf: '', era, leagueKey: lk, year: yr });
+  });
+
+  msg.textContent = n < count
+    ? `Only ${pool.length} eligible — added all ${n}.`
+    : `Added ${n} random team${n !== 1 ? 's' : ''}.`;
+  setTimeout(() => { msg.textContent = ''; }, 3000);
+
+  renderBrowser();
+  renderLeague();
+}
+
+// ══════════════════════════════════════════════
+// YOUR LEAGUE TAB
+// ══════════════════════════════════════════════
+function renderLeague() {
+  const tab = document.querySelector('.tab[data-tab="league"]');
+  tab.textContent = `Your League (${fantasyLeague.length})`;
+
+  const tbody = document.getElementById('league-tbody');
+  if (fantasyLeague.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" class="empty">No teams yet. Add teams from the Browse tab.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = fantasyLeague.map((t, i) => `
+    <tr>
+      <td class="c">${i + 1}</td>
+      <td>${escHtml(t.name)}</td>
+      <td style="color:var(--dim);font-size:0.78rem;white-space:nowrap">${escHtml(t.era)}</td>
+      <td class="c">${t.off}</td>
+      <td class="c">${t.def}</td>
+      <td class="c">${t.cgf}</td>
+      <td><input class="conf-inp" type="text" value="${escAttr(t.conf)}" placeholder="AFC / NFC…" maxlength="8" oninput="fantasyLeague[${i}].conf=this.value"></td>
+      <td><input class="abbr-inp" type="text" value="${escAttr(t.abbr)}" maxlength="6" oninput="fantasyLeague[${i}].abbr=this.value.toUpperCase();this.value=this.value.toUpperCase()"></td>
+      <td class="c"><button class="del-btn" onclick="removeTeam(${i})" title="Remove">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+function clearLeague() {
+  if (!fantasyLeague.length) return;
+  if (!confirm(`Remove all ${fantasyLeague.length} teams from your league?`)) return;
+  fantasyLeague = [];
+  renderBrowser();
+  renderLeague();
+}
+
+function exportCSV() {
+  if (!fantasyLeague.length) { alert('No teams to export.'); return; }
+  const header = 'Name,OFF,DEF,CGF,Conf,Abbr';
+  const rows = fantasyLeague.map(t => {
+    const name = t.name.replace(/,/g, '');
+    return [name, t.off, t.def, t.cgf, t.conf, t.abbr].join(',');
+  });
+  const csv = [header, ...rows].join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'fantasy-league.csv';
+  a.click();
+}
+
+// ══════════════════════════════════════════════
+// UTILITIES
+// ══════════════════════════════════════════════
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escAttr(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+(function init() {
+  if (typeof LEAGUE_REGISTRY === 'undefined') {
+    document.body.innerHTML = `<div style="color:#da3633;text-align:center;padding:60px;font-family:sans-serif">
+      <h2>Could not load football data.</h2>
+      <p style="margin-top:12px;color:#8b949e">Make sure <code>football-data.js</code> is in the same folder as this file, and open via a web server (not file://).</p>
+    </div>`;
+    return;
+  }
+  populateLeagueDrop();
+  onLeagueChange();
+  populateRandLeagueDrop();
+  // Auto-load first season
+  const firstLeague = Object.keys(LEAGUE_REGISTRY)[0];
+  const firstYear = getYearsForLeague(firstLeague)[0];
+  if (firstYear) {
+    document.getElementById('browse-year').value = firstYear;
+    currentBrowseLeague = firstLeague;
+    currentBrowseYear = String(firstYear);
+    renderBrowser();
+  }
+  renderLeague();
+})();
+</script>
+</body>
+</html>

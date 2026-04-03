@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Play Football — Team Creator</title>
+<style>
+:root {
+  --bg:#0d1117; --surface:#161b22; --surface2:#21262d;
+  --border:#30363d; --green:#1a8a2e; --green2:#2ea043;
+  --red:#da3633; --yellow:#b08800; --blue:#1f6feb;
+  --text:#c9d1d9; --dim:#8b949e; --white:#f0f6fc;
+  --elite:#c9860a; --strong:#2ea043; --average:#1f6feb;
+  --weak:#6e40c9; --basement:#da3633;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;padding:16px 16px 48px}
+
+/* Header */
+.hdr{text-align:center;margin-bottom:28px}
+.hdr h1{font-size:1.9rem;font-weight:800;color:var(--white);letter-spacing:3px;text-transform:uppercase}
+.hdr p{color:var(--dim);font-size:0.82rem;margin-top:4px}
+.back-link{display:inline-block;color:var(--dim);font-size:0.8rem;text-decoration:none;margin-bottom:16px;letter-spacing:.5px}
+.back-link:hover{color:var(--text)}
+
+/* Tabs */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px;max-width:900px;margin-left:auto;margin-right:auto}
+.tab{padding:10px 22px;cursor:pointer;font-size:0.88rem;font-weight:600;color:var(--dim);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s}
+.tab.active{color:var(--white);border-bottom-color:var(--green)}
+.tab:hover:not(.active){color:var(--text)}
+.tab-pane{display:none;max-width:900px;margin:0 auto}
+.tab-pane.show{display:block}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:18px}
+.card-title{font-size:0.72rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);margin-bottom:14px;font-weight:600}
+
+/* Buttons */
+.btn{background:var(--green);color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:0.92rem;font-weight:600;cursor:pointer;transition:background .15s;letter-spacing:.3px}
+.btn:hover{background:var(--green2)}
+.btn:disabled{background:var(--surface2);color:var(--dim);cursor:not-allowed}
+.btn-blue{background:var(--blue)}.btn-blue:hover{background:#388bfd}
+.btn-sm{padding:6px 14px;font-size:0.82rem}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--text);background:var(--surface2)}
+.btn-red{background:var(--red)}.btn-red:hover{background:#f85149}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* Form elements */
+label{display:block;font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-bottom:5px;margin-top:12px}
+label:first-child{margin-top:0}
+select,input[type=text],input[type=number]{width:100%;background:var(--surface2);color:var(--white);border:1px solid var(--border);border-radius:6px;padding:8px 11px;font-size:0.93rem;cursor:pointer}
+select:focus,input:focus{outline:2px solid var(--green);outline-offset:1px}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button{opacity:1}
+
+/* Stat inputs */
+.stat-inputs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+.stat-inp-wrap{text-align:center}
+.stat-inp-wrap label{text-align:center;display:block}
+.stat-inp-wrap input{text-align:center;font-size:1.3rem;font-weight:700;color:var(--white);padding:10px 4px}
+.stat-hint{font-size:0.7rem;color:var(--dim);margin-top:3px;text-align:center}
+
+/* Identity result badge */
+.identity-result{display:inline-block;padding:5px 14px;border-radius:6px;font-size:0.82rem;font-weight:700;background:var(--surface2);color:var(--dim);margin-left:12px;vertical-align:middle;min-width:100px;text-align:center}
+
+/* Tier badge */
+.tier-badge{display:inline-block;padding:2px 10px;border-radius:4px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+.tier-Elite{background:rgba(201,134,10,.2);color:var(--elite);border:1px solid rgba(201,134,10,.4)}
+.tier-Strong{background:rgba(46,160,67,.2);color:var(--strong);border:1px solid rgba(46,160,67,.4)}
+.tier-Average{background:rgba(31,111,235,.2);color:var(--average);border:1px solid rgba(31,111,235,.4)}
+.tier-Weak{background:rgba(110,64,201,.2);color:var(--weak);border:1px solid rgba(110,64,201,.4)}
+.tier-Basement{background:rgba(218,54,51,.2);color:var(--basement);border:1px solid rgba(218,54,51,.4)}
+
+/* Reference tables */
+.ref-section{margin-top:20px}
+.ref-title{font-size:0.72rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);margin-bottom:10px;font-weight:600}
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.ref-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:0.82rem}
+.ref-card .rc-tier{font-weight:700;font-size:0.75rem;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.ref-card table{width:100%;border-collapse:collapse}
+.ref-card th{font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);padding:3px 0;border-bottom:1px solid var(--border);text-align:center}
+.ref-card td{text-align:center;padding:2px 0;font-size:0.8rem;color:var(--text)}
+.ref-card td:first-child{color:var(--dim);font-size:0.72rem}
+.ref-card td.hi{color:var(--white);font-weight:600}
+
+/* Roster table */
+.roster-table{width:100%;border-collapse:collapse;font-size:0.85rem}
+.roster-table th{font-size:0.67rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;font-weight:600}
+.roster-table td{padding:8px 10px;border-bottom:1px solid var(--surface2);color:var(--text);vertical-align:middle}
+.roster-table td input{background:transparent;border:none;color:var(--text);font-size:0.85rem;width:100%;min-width:60px}
+.roster-table td input:focus{background:var(--surface2);border-radius:4px;outline:none;padding:2px 6px}
+.roster-table td.num-cell{text-align:center;font-weight:600;color:var(--white)}
+.roster-table tbody tr:hover{background:var(--surface2)}
+.del-btn{background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:1rem;padding:2px 6px;border-radius:4px}
+.del-btn:hover{background:var(--red);color:#fff}
+
+/* League tier breakdown table */
+.tier-breakdown{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:14px 0}
+.tb-cell{background:var(--surface2);border-radius:8px;padding:12px 8px;text-align:center}
+.tb-count{font-size:1.6rem;font-weight:700;line-height:1}
+.tb-label{font-size:0.67rem;text-transform:uppercase;letter-spacing:.8px;margin-top:4px}
+
+/* Dice animation */
+@keyframes spin {0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)}}
+.rolling{animation:spin 0.2s linear infinite}
+
+/* Export box */
+.export-box{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;font-family:monospace;font-size:0.78rem;color:var(--dim);max-height:200px;overflow-y:auto;white-space:pre;margin-top:10px}
+
+/* Empty state */
+.empty{text-align:center;padding:32px;color:var(--dim);font-size:0.88rem}
+
+/* Divider */
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+
+/* Two col layout for single builder */
+.builder-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:600px){.builder-cols{grid-template-columns:1fr}.ref-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<a class="back-link" href="index.html" onclick="if(window.parent!==window){window.parent.postMessage('goto:home','*');return false;}">← Back to QP Football</a>
+
+<div class="hdr">
+  <h1>Team Creator</h1>
+  <p>Build custom teams and leagues for Quick Play Football</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('single')">Single Team</div>
+  <div class="tab" onclick="showTab('league')">League Builder</div>
+  <div class="tab" onclick="showTab('rules')">How It Works</div>
+</div>
+
+<!-- ═══════════════════════════════ SINGLE TEAM ═══════════════════════════════ -->
+<div id="tab-single" class="tab-pane show">
+
+  <div class="builder-cols">
+
+    <!-- Left: Controls -->
+    <div>
+      <div class="card">
+        <div class="card-title">Team Identity</div>
+
+        <label>Team Tier</label>
+        <select id="sb-tier" onchange="updateSingleRef()">
+          <option value="Elite">Elite — Championship contender</option>
+          <option value="Strong">Strong — Playoff calibre</option>
+          <option value="Average" selected>Average — .500 team</option>
+          <option value="Weak">Weak — Rebuilding</option>
+          <option value="Basement">Basement — Bottom dweller</option>
+        </select>
+
+        <label>City / Metro</label>
+        <input type="text" id="sb-city" placeholder="e.g. Lakefield" oninput="autoAbbr()">
+
+        <label>Nickname</label>
+        <input type="text" id="sb-nick" placeholder="e.g. Wolves">
+
+        <label>Abbreviation (3 letters)</label>
+        <input type="text" id="sb-abbr" placeholder="LAK" maxlength="4" style="text-transform:uppercase">
+
+        <label>Conference</label>
+        <select id="sb-conf">
+          <option value="AFC">AFC</option>
+          <option value="NFC">NFC</option>
+          <option value="—">— (Custom)</option>
+        </select>
+
+        <div style="margin-top:14px">
+          <button class="btn btn-outline btn-sm" onclick="rollName()">🎲 Roll Random Name</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Ratings</div>
+        <div class="stat-inputs">
+          <div class="stat-inp-wrap">
+            <label>OFF</label>
+            <input type="number" id="sb-off" min="4" max="21" value="10">
+            <div class="stat-hint">4 – 21</div>
+          </div>
+          <div class="stat-inp-wrap">
+            <label>DEF</label>
+            <input type="number" id="sb-def" min="4" max="21" value="10">
+            <div class="stat-hint">4 – 21</div>
+          </div>
+          <div class="stat-inp-wrap">
+            <label>CGF</label>
+            <input type="number" id="sb-cgf" min="0" max="12" value="6">
+            <div class="stat-hint">0 – 12</div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px" class="btn-row">
+          <button class="btn btn-sm" onclick="rollStats()">🎲 Roll Stats (2d6)</button>
+          <span style="font-size:0.78rem;color:var(--dim)">or enter manually above</span>
+        </div>
+        <div id="sb-roll-detail" style="font-size:0.78rem;color:var(--dim);margin-top:8px;min-height:18px"></div>
+
+        <hr class="divider">
+
+        <div class="card-title" style="margin-bottom:10px">Identity Roll (optional)</div>
+        <div class="btn-row">
+          <button class="btn btn-outline btn-sm" onclick="rollIdentity()">🎲 Roll d6</button>
+          <span class="identity-result" id="identity-result">—</span>
+        </div>
+        <div style="font-size:0.75rem;color:var(--dim);margin-top:8px">
+          1–2: Offensive (OFF+2, DEF–2) &nbsp;|&nbsp; 3–4: Balanced &nbsp;|&nbsp; 5–6: Defensive (OFF–2, DEF+2)
+        </div>
+      </div>
+
+      <button class="btn" onclick="saveTeam()" style="width:100%">Save Team to Roster</button>
+    </div>
+
+    <!-- Right: Reference tables -->
+    <div>
+      <div class="card">
+        <div class="card-title">2d6 Reference — <span id="ref-tier-label">Average</span></div>
+        <p style="font-size:0.78rem;color:var(--dim);margin-bottom:12px">Roll 2d6 for OFF and DEF, roll 1d6 for CGF. Find your roll below to read the stat value. Or just use the Roll button on the left.</p>
+        <div id="single-ref-table"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">All Tiers Quick Reference</div>
+        <div class="ref-grid" id="all-ref-grid"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Roster -->
+  <div class="card" id="roster-card" style="margin-top:4px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div class="card-title" style="margin-bottom:0">Saved Roster</div>
+      <div class="btn-row">
+        <button class="btn btn-sm btn-blue" onclick="exportCSVFile(roster, 'my-teams.csv')">Export CSV</button>
+        <button class="btn btn-sm btn-red btn-outline" onclick="clearRoster()">Clear All</button>
+      </div>
+    </div>
+    <div id="roster-body"><div class="empty">No teams saved yet. Build your first team above.</div></div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════ LEAGUE BUILDER ═══════════════════════════════ -->
+<div id="tab-league" class="tab-pane">
+
+  <div class="card">
+    <div class="card-title">League Size</div>
+    <div style="display:grid;grid-template-columns:200px 1fr;gap:14px;align-items:end">
+      <div>
+        <label>Number of Teams</label>
+        <input type="number" id="lg-size" min="4" max="64" value="16" oninput="updateLeagueTiers()">
+      </div>
+      <div>
+        <button class="btn" onclick="generateLeague()">🎲 Generate League</button>
+      </div>
+    </div>
+
+    <div class="tier-breakdown" id="lg-tiers" style="margin-top:16px"></div>
+
+    <p style="font-size:0.75rem;color:var(--dim)">
+      Formula: Elite ≈14% · Strong ≈21% · Average = remainder · Weak ≈21% · Basement ≈11%
+    </p>
+  </div>
+
+  <div id="lg-teams-card" style="display:none">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="card-title" style="margin-bottom:0">Generated League — Edit names &amp; ratings freely</div>
+        <div class="btn-row">
+          <button class="btn btn-sm btn-blue" onclick="addLeagueToRoster()">Add All to Roster</button>
+          <button class="btn btn-sm btn-blue" onclick="exportCSVFile(leagueTeams, 'my-league.csv')">Export CSV</button>
+          <button class="btn btn-sm btn-red btn-outline" onclick="clearLeague()">Clear All</button>
+        </div>
+      </div>
+      <div id="lg-teams-wrap" style="overflow-x:auto">
+        <table class="roster-table" id="lg-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Tier</th><th>City</th><th>Nickname</th><th>Abbr</th><th>Conf</th>
+              <th style="text-align:center">OFF</th><th style="text-align:center">DEF</th><th style="text-align:center">CGF</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="lg-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════ HOW IT WORKS ═══════════════════════════════ -->
+<div id="tab-rules" class="tab-pane">
+
+  <div class="card">
+    <div class="card-title">Team Creation — Step by Step</div>
+    <p style="font-size:0.88rem;color:var(--text);line-height:1.6;margin-bottom:12px">
+      Each team is defined by three ratings that feed directly into the Quick Play Football game engine:
+    </p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+      <div style="background:var(--surface2);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:1.4rem;font-weight:800;color:var(--white)">OFF</div>
+        <div style="font-size:0.75rem;color:var(--dim);margin-top:4px">Offensive rating.<br>Range: 4–21</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:1.4rem;font-weight:800;color:var(--white)">DEF</div>
+        <div style="font-size:0.75rem;color:var(--dim);margin-top:4px">Defensive rating.<br>Range: 4–21</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:1.4rem;font-weight:800;color:var(--white)">CGF</div>
+        <div style="font-size:0.75rem;color:var(--dim);margin-top:4px">Close Game Factor.<br>Range: 0–12</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="card-title">Step 1 — Assign a Tier</div>
+    <table style="width:100%;border-collapse:collapse;font-size:0.84rem;margin-bottom:14px">
+      <thead><tr style="border-bottom:1px solid var(--border)">
+        <th style="text-align:left;padding:7px;color:var(--dim);font-size:0.7rem;text-transform:uppercase;letter-spacing:1px">Tier</th>
+        <th style="text-align:left;padding:7px;color:var(--dim);font-size:0.7rem;text-transform:uppercase;letter-spacing:1px">Description</th>
+        <th style="text-align:center;padding:7px;color:var(--dim);font-size:0.7rem;text-transform:uppercase;letter-spacing:1px">% of League</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:7px"><span class="tier-badge tier-Elite">Elite</span></td><td style="padding:7px;color:var(--text)">Championship contenders</td><td style="padding:7px;text-align:center;color:var(--dim)">~14%</td></tr>
+        <tr style="background:var(--surface2)"><td style="padding:7px"><span class="tier-badge tier-Strong">Strong</span></td><td style="padding:7px;color:var(--text)">Playoff-calibre</td><td style="padding:7px;text-align:center;color:var(--dim)">~21%</td></tr>
+        <tr><td style="padding:7px"><span class="tier-badge tier-Average">Average</span></td><td style="padding:7px;color:var(--text)">.500 teams</td><td style="padding:7px;text-align:center;color:var(--dim)">remainder</td></tr>
+        <tr style="background:var(--surface2)"><td style="padding:7px"><span class="tier-badge tier-Weak">Weak</span></td><td style="padding:7px;color:var(--text)">Rebuilding</td><td style="padding:7px;text-align:center;color:var(--dim)">~21%</td></tr>
+        <tr><td style="padding:7px"><span class="tier-badge tier-Basement">Basement</span></td><td style="padding:7px;color:var(--text)">Bottom-dwellers</td><td style="padding:7px;text-align:center;color:var(--dim)">~11%</td></tr>
+      </tbody>
+    </table>
+
+    <hr class="divider">
+
+    <div class="card-title">Step 2 — Roll Stats (2d6 bell curve)</div>
+    <p style="font-size:0.84rem;color:var(--dim);margin-bottom:12px">Roll 2d6 for OFF, 2d6 for DEF, 1d6 for CGF. Add the tier modifier. The bell curve means average rolls are most common — extremes are rare.</p>
+    <table style="width:100%;border-collapse:collapse;font-size:0.83rem">
+      <thead><tr style="border-bottom:1px solid var(--border)">
+        <th style="text-align:left;padding:7px;color:var(--dim);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">Tier</th>
+        <th style="text-align:center;padding:7px;color:var(--dim);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">2d6 OFF modifier</th>
+        <th style="text-align:center;padding:7px;color:var(--dim);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">OFF range</th>
+        <th style="text-align:center;padding:7px;color:var(--dim);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">2d6 DEF modifier</th>
+        <th style="text-align:center;padding:7px;color:var(--dim);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">DEF range</th>
+        <th style="text-align:center;padding:7px;color:var(--dim);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">1d6 CGF modifier</th>
+        <th style="text-align:center;padding:7px;color:var(--dim);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">CGF range</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:7px"><span class="tier-badge tier-Elite">Elite</span></td><td style="padding:7px;text-align:center;color:var(--text)">+9</td><td style="padding:7px;text-align:center;color:var(--dim)">11–21</td><td style="padding:7px;text-align:center;color:var(--text)">+9</td><td style="padding:7px;text-align:center;color:var(--dim)">11–21</td><td style="padding:7px;text-align:center;color:var(--text)">+6</td><td style="padding:7px;text-align:center;color:var(--dim)">7–12</td></tr>
+        <tr style="background:var(--surface2)"><td style="padding:7px"><span class="tier-badge tier-Strong">Strong</span></td><td style="padding:7px;text-align:center;color:var(--text)">+6</td><td style="padding:7px;text-align:center;color:var(--dim)">8–18</td><td style="padding:7px;text-align:center;color:var(--text)">+6</td><td style="padding:7px;text-align:center;color:var(--dim)">8–18</td><td style="padding:7px;text-align:center;color:var(--text)">+4</td><td style="padding:7px;text-align:center;color:var(--dim)">5–10</td></tr>
+        <tr><td style="padding:7px"><span class="tier-badge tier-Average">Average</span></td><td style="padding:7px;text-align:center;color:var(--text)">+3</td><td style="padding:7px;text-align:center;color:var(--dim)">5–15</td><td style="padding:7px;text-align:center;color:var(--text)">+3</td><td style="padding:7px;text-align:center;color:var(--dim)">5–15</td><td style="padding:7px;text-align:center;color:var(--text)">+2</td><td style="padding:7px;text-align:center;color:var(--dim)">3–8</td></tr>
+        <tr style="background:var(--surface2)"><td style="padding:7px"><span class="tier-badge tier-Weak">Weak</span></td><td style="padding:7px;text-align:center;color:var(--text)">+0</td><td style="padding:7px;text-align:center;color:var(--dim)">4–12</td><td style="padding:7px;text-align:center;color:var(--text)">+0</td><td style="padding:7px;text-align:center;color:var(--dim)">4–12</td><td style="padding:7px;text-align:center;color:var(--text)">+1</td><td style="padding:7px;text-align:center;color:var(--dim)">2–7</td></tr>
+        <tr><td style="padding:7px"><span class="tier-badge tier-Basement">Basement</span></td><td style="padding:7px;text-align:center;color:var(--text)">−2</td><td style="padding:7px;text-align:center;color:var(--dim)">4–10</td><td style="padding:7px;text-align:center;color:var(--text)">−2</td><td style="padding:7px;text-align:center;color:var(--dim)">4–10</td><td style="padding:7px;text-align:center;color:var(--text)">+0</td><td style="padding:7px;text-align:center;color:var(--dim)">1–6</td></tr>
+      </tbody>
+    </table>
+
+    <hr class="divider">
+
+    <div class="card-title">Step 3 — Identity Roll (optional d6)</div>
+    <p style="font-size:0.84rem;color:var(--dim);margin-bottom:10px">Specialise your team after rolling base stats. This shifts points between OFF and DEF.</p>
+    <table style="width:100%;border-collapse:collapse;font-size:0.83rem">
+      <thead><tr style="border-bottom:1px solid var(--border)">
+        <th style="text-align:left;padding:7px;color:var(--dim);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">d6 Roll</th>
+        <th style="text-align:left;padding:7px;color:var(--dim);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">Identity</th>
+        <th style="text-align:left;padding:7px;color:var(--dim);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">Adjustment</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:7px;color:var(--text)">1–2</td><td style="padding:7px;color:var(--text)">Offensive</td><td style="padding:7px;color:var(--dim)">OFF +2, DEF −2</td></tr>
+        <tr style="background:var(--surface2)"><td style="padding:7px;color:var(--text)">3–4</td><td style="padding:7px;color:var(--text)">Balanced</td><td style="padding:7px;color:var(--dim)">No change</td></tr>
+        <tr><td style="padding:7px;color:var(--text)">5–6</td><td style="padding:7px;color:var(--text)">Defensive</td><td style="padding:7px;color:var(--dim)">OFF −2, DEF +2</td></tr>
+      </tbody>
+    </table>
+
+    <hr class="divider">
+
+    <div class="card-title">Step 4 — League Structure</div>
+    <p style="font-size:0.84rem;color:var(--dim);margin-bottom:12px">Use the League Builder tab to auto-generate a balanced league. For a manual guide:</p>
+    <table style="width:100%;border-collapse:collapse;font-size:0.83rem">
+      <thead><tr style="border-bottom:1px solid var(--border)">
+        <th style="padding:7px;color:var(--dim);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">Teams</th>
+        <th style="padding:7px;text-align:center;color:var(--elite);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">Elite</th>
+        <th style="padding:7px;text-align:center;color:var(--strong);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">Strong</th>
+        <th style="padding:7px;text-align:center;color:var(--average);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">Average</th>
+        <th style="padding:7px;text-align:center;color:var(--weak);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">Weak</th>
+        <th style="padding:7px;text-align:center;color:var(--basement);font-size:0.68rem;text-transform:uppercase;letter-spacing:1px">Basement</th>
+      </tr></thead>
+      <tbody id="rules-tier-table"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+// ─── Data ───────────────────────────────────────────────────────────
+const CITIES = [
+  'Ashford','Bayside','Brookfield','Cascade','Clearwater','Crestview',
+  'Dockside','Eastport','Elmwood','Fairhaven','Foxborough','Glendale',
+  'Harborview','Ironwood','Keystone','Lakefield','Lakeshore','Midland',
+  'Millbrook','Northgate','Oakridge','Pennfield','Portside','Redstone',
+  'Riverside','Rockford','Silverdale','Southbrook','Stonehaven','Sunridge',
+  'Thornwick','Valleyport','Westfield','Whitehaven','Windmere'
+];
+
+const NICKNAMES = [
+  'Armada','Barons','Blaze','Bolts','Brawlers','Bulldogs','Cannons','Cobras',
+  'Condors','Cougars','Crushers','Cyclones','Drifters','Eagles','Falcons',
+  'Foxes','Fury','Gamblers','Grizzlies','Hawks','Howlers','Hurricanes',
+  'Jaguars','Knights','Lions','Lynx','Marauders','Monarchs','Panthers',
+  'Phantoms','Raiders','Ravens','Riptide','Rockets','Roughnecks','Sentinels',
+  'Sharks','Spartans','Stallions','Storm','Strikers','Thunder','Titans',
+  'Timberwolves','Vipers','Warlords','Wolves'
+];
+
+const TIER_MODS = {
+  Elite:    {off:9,  def:9,  cgf:6},
+  Strong:   {off:6,  def:6,  cgf:4},
+  Average:  {off:3,  def:3,  cgf:2},
+  Weak:     {off:0,  def:0,  cgf:1},
+  Basement: {off:-2, def:-2, cgf:0}
+};
+
+const TIER_ORDER = ['Elite','Strong','Average','Weak','Basement'];
+
+let roster = [];  // single-team roster
+let leagueTeams = [];  // generated league
+
+// ─── Dice ────────────────────────────────────────────────────────────
+const d6  = () => Math.floor(Math.random()*6)+1;
+const twoD6 = () => d6()+d6();
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+
+function clampOff(v){ return Math.max(4, Math.min(21, v)); }
+function clampDef(v){ return Math.max(4, Math.min(21, v)); }
+function clampCgf(v){ return Math.max(0, Math.min(12, v)); }
+
+function rollTeamStats(tier) {
+  const m = TIER_MODS[tier];
+  const r1=twoD6(), r2=twoD6(), r3=d6();
+  return {
+    off: clampOff(r1 + m.off),
+    def: clampDef(r2 + m.def),
+    cgf: clampCgf(r3 + m.cgf),
+    rolls: {r1, r2, r3}
+  };
+}
+
+// ─── Tabs ─────────────────────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('show');
+  event.target.classList.add('active');
+}
+
+// ─── Reference tables ────────────────────────────────────────────────
+function buildRefTable(tier) {
+  const m = TIER_MODS[tier];
+  // 2d6 can roll 2–12
+  let rows = '';
+  for (let r=2; r<=12; r++) {
+    const off = clampOff(r + m.off);
+    const def = clampDef(r + m.def);
+    rows += `<tr>
+      <td>${r}</td>
+      <td class="${r===7?'hi':''}">${off}</td>
+      <td class="${r===7?'hi':''}">${def}</td>
+    </tr>`;
+  }
+  // CGF: 1d6
+  let cgfRows = '';
+  for (let r=1; r<=6; r++) {
+    const cgf = clampCgf(r + m.cgf);
+    cgfRows += `<tr><td>${r}</td><td class="${r===3||r===4?'hi':''}">${cgf}</td></tr>`;
+  }
+  return `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div>
+        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-bottom:6px">2d6 → OFF &amp; DEF</div>
+        <table style="width:100%;border-collapse:collapse;font-size:0.82rem">
+          <thead><tr style="border-bottom:1px solid var(--border)">
+            <th style="text-align:left;padding:4px;color:var(--dim);font-size:0.65rem">Roll</th>
+            <th style="text-align:center;padding:4px;color:var(--dim);font-size:0.65rem">OFF</th>
+            <th style="text-align:center;padding:4px;color:var(--dim);font-size:0.65rem">DEF</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <div style="font-size:0.68rem;color:var(--dim);margin-top:6px">Most likely roll: 6–8 (bell curve)</div>
+      </div>
+      <div>
+        <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-bottom:6px">1d6 → CGF</div>
+        <table style="width:100%;border-collapse:collapse;font-size:0.82rem">
+          <thead><tr style="border-bottom:1px solid var(--border)">
+            <th style="text-align:left;padding:4px;color:var(--dim);font-size:0.65rem">Roll</th>
+            <th style="text-align:center;padding:4px;color:var(--dim);font-size:0.65rem">CGF</th>
+          </tr></thead>
+          <tbody>${cgfRows}</tbody>
+        </table>
+        <div style="font-size:0.68rem;color:var(--dim);margin-top:6px">CGF 0–12. Higher = better in close games.</div>
+      </div>
+    </div>`;
+}
+
+function updateSingleRef() {
+  const tier = document.getElementById('sb-tier').value;
+  document.getElementById('ref-tier-label').textContent = tier;
+  document.getElementById('single-ref-table').innerHTML = buildRefTable(tier);
+}
+
+function buildAllRefGrid() {
+  const grid = document.getElementById('all-ref-grid');
+  grid.innerHTML = TIER_ORDER.map(tier => {
+    const m = TIER_MODS[tier];
+    // Typical (7+mod) result
+    const typOff = clampOff(7+m.off), typDef = clampDef(7+m.def), typCgf = clampCgf(3+m.cgf);
+    return `<div class="ref-card">
+      <div class="rc-tier tier-badge tier-${tier}">${tier}</div>
+      <table>
+        <thead><tr><th>Roll</th><th>OFF</th><th>DEF</th></tr></thead>
+        <tbody>
+          ${[2,4,6,7,8,10,12].map(r=>`<tr>
+            <td>${r}</td>
+            <td class="${r===7?'hi':''}">${clampOff(r+m.off)}</td>
+            <td class="${r===7?'hi':''}">${clampDef(r+m.def)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      <div style="margin-top:8px;font-size:0.68rem;color:var(--dim)">Typical: OFF ${typOff}, DEF ${typDef}, CGF ${typCgf}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── Single Team Builder ──────────────────────────────────────────────
+function rollStats() {
+  const tier = document.getElementById('sb-tier').value;
+  const s = rollTeamStats(tier);
+  document.getElementById('sb-off').value = s.off;
+  document.getElementById('sb-def').value = s.def;
+  document.getElementById('sb-cgf').value = s.cgf;
+  document.getElementById('sb-roll-detail').textContent =
+    `Rolled: 2d6(${s.rolls.r1}) + ${TIER_MODS[tier].off} = OFF ${s.off} · 2d6(${s.rolls.r2}) + ${TIER_MODS[tier].def} = DEF ${s.def} · 1d6(${s.rolls.r3}) + ${TIER_MODS[tier].cgf} = CGF ${s.cgf}`;
+  document.getElementById('identity-result').textContent = '—';
+  document.getElementById('identity-result').style.background = '';
+}
+
+function rollIdentity() {
+  const roll = d6();
+  let label, offAdj, defAdj;
+  if (roll <= 2) { label='Offensive (OFF+2, DEF−2)'; offAdj=2; defAdj=-2; }
+  else if (roll <= 4) { label='Balanced'; offAdj=0; defAdj=0; }
+  else { label='Defensive (OFF−2, DEF+2)'; offAdj=-2; defAdj=2; }
+
+  const offEl = document.getElementById('sb-off');
+  const defEl = document.getElementById('sb-def');
+  offEl.value = clampOff(parseInt(offEl.value||10) + offAdj);
+  defEl.value = clampDef(parseInt(defEl.value||10) + defAdj);
+
+  const res = document.getElementById('identity-result');
+  res.textContent = `${roll} — ${label}`;
+}
+
+function rollName() {
+  const city = pick(CITIES);
+  const nick = pick(NICKNAMES);
+  document.getElementById('sb-city').value = city;
+  document.getElementById('sb-nick').value = nick;
+  document.getElementById('sb-abbr').value = city.slice(0,3).toUpperCase();
+}
+
+function autoAbbr() {
+  const city = document.getElementById('sb-city').value;
+  if (city.length >= 2) {
+    document.getElementById('sb-abbr').value = city.slice(0,3).toUpperCase();
+  }
+}
+
+function saveTeam() {
+  const city  = document.getElementById('sb-city').value.trim();
+  const nick  = document.getElementById('sb-nick').value.trim();
+  const abbr  = document.getElementById('sb-abbr').value.trim().toUpperCase();
+  const conf  = document.getElementById('sb-conf').value;
+  const tier  = document.getElementById('sb-tier').value;
+  const off   = clampOff(parseInt(document.getElementById('sb-off').value)||10);
+  const def   = clampDef(parseInt(document.getElementById('sb-def').value)||10);
+  const cgf   = clampCgf(parseInt(document.getElementById('sb-cgf').value)||6);
+
+  if (!city && !nick) { alert('Enter a city or nickname first.'); return; }
+  const name = [city, nick].filter(Boolean).join(' ');
+  const abbrFinal = abbr || (city||nick).slice(0,3).toUpperCase();
+
+  roster.push({ name, city, nick, abbr: abbrFinal, conf, tier, off, def, cgf });
+  renderRoster();
+}
+
+function renderRoster() {
+  const body = document.getElementById('roster-body');
+  if (!roster.length) {
+    body.innerHTML = '<div class="empty">No teams saved yet. Build your first team above.</div>';
+    return;
+  }
+  body.innerHTML = `<div style="overflow-x:auto"><table class="roster-table">
+    <thead><tr>
+      <th>#</th><th>Tier</th><th>Name</th><th>Abbr</th><th>Conf</th>
+      <th style="text-align:center">OFF</th><th style="text-align:center">DEF</th><th style="text-align:center">CGF</th>
+      <th></th>
+    </tr></thead>
+    <tbody>${roster.map((t,i)=>`<tr>
+      <td class="num-cell">${i+1}</td>
+      <td><span class="tier-badge tier-${t.tier}">${t.tier}</span></td>
+      <td>${t.name}</td>
+      <td style="color:var(--dim)">${t.abbr}</td>
+      <td style="color:var(--dim)">${t.conf}</td>
+      <td class="num-cell">${t.off}</td>
+      <td class="num-cell">${t.def}</td>
+      <td class="num-cell">${t.cgf}</td>
+      <td><button class="del-btn" onclick="deleteTeam(${i})" title="Remove">✕</button></td>
+    </tr>`).join('')}
+    </tbody>
+  </table></div>`;
+}
+
+function deleteTeam(i) {
+  roster.splice(i, 1);
+  renderRoster();
+}
+
+function clearRoster() {
+  if (!roster.length) return;
+  if (confirm('Clear all saved teams?')) { roster=[]; renderRoster(); }
+}
+
+function exportRoster() {
+  if (!roster.length) { alert('No teams to export.'); return; }
+  exportTeams(roster);
+}
+
+function exportTeams(teams) {
+  const js = teams.map(t =>
+    `  ${t.abbr}: {name:"${[t.city,t.nick].filter(Boolean).join(' ')}", abbr:"${t.abbr}", off:${t.off}, def:${t.def}, cgf:${t.cgf}, conf:"${t.conf}"}`
+  ).join(',\n');
+  const full = `// Paste into the TEAMS object in index.html\n{\n${js}\n}`;
+  navigator.clipboard.writeText(full).then(()=>alert('Copied to clipboard!')).catch(()=>{
+    prompt('Copy this snippet:', full);
+  });
+}
+
+function exportCSVFile(teams, filename) {
+  if (!teams.length) { alert('No teams to export.'); return; }
+  const header = 'Name,OFF,DEF,CGF,Conf,Abbr';
+  const rows = teams.map(t => {
+    const name = [t.city, t.nick].filter(Boolean).join(' ') || t.name || t.abbr;
+    return [name, t.off, t.def, t.cgf, t.conf, t.abbr].join(',');
+  });
+  const csv = [header, ...rows].join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = filename;
+  a.click();
+}
+
+// ─── League Builder ───────────────────────────────────────────────────
+function leagueTiers(n) {
+  n = Math.max(4, n);
+  const elite    = Math.ceil(n*0.14);
+  const strong   = Math.ceil(n*0.21);
+  const weak     = Math.ceil(n*0.21);
+  const basement = Math.ceil(n*0.11);
+  const avg      = Math.max(0, n - elite - strong - weak - basement);
+  return {Elite:elite, Strong:strong, Average:avg, Weak:weak, Basement:basement};
+}
+
+function updateLeagueTiers() {
+  const n = parseInt(document.getElementById('lg-size').value)||16;
+  const tiers = leagueTiers(n);
+  const colors = {Elite:'var(--elite)',Strong:'var(--strong)',Average:'var(--average)',Weak:'var(--weak)',Basement:'var(--basement)'};
+  document.getElementById('lg-tiers').innerHTML = TIER_ORDER.map(t=>`
+    <div class="tb-cell">
+      <div class="tb-count" style="color:${colors[t]}">${tiers[t]}</div>
+      <div class="tb-label" style="color:${colors[t]}">${t}</div>
+    </div>`).join('');
+}
+
+function generateLeague() {
+  const n = parseInt(document.getElementById('lg-size').value)||16;
+  const tiers = leagueTiers(n);
+  leagueTeams = [];
+  const usedCities = new Set(), usedNicks = new Set();
+
+  function pickUnique(arr, used) {
+    const avail = arr.filter(x=>!used.has(x));
+    if (!avail.length) { used.clear(); return pick(arr); }
+    const v = pick(avail); used.add(v); return v;
+  }
+
+  TIER_ORDER.forEach(tier => {
+    for (let i=0; i<tiers[tier]; i++) {
+      const city = pickUnique(CITIES, usedCities);
+      const nick = pickUnique(NICKNAMES, usedNicks);
+      const abbr = city.slice(0,3).toUpperCase();
+      const conf = leagueTeams.length % 2 === 0 ? 'AFC' : 'NFC';
+      const s = rollTeamStats(tier);
+      leagueTeams.push({city, nick, name:`${city} ${nick}`, abbr, conf, tier, off:s.off, def:s.def, cgf:s.cgf});
+    }
+  });
+
+  renderLeague();
+  document.getElementById('lg-teams-card').style.display='block';
+}
+
+function renderLeague() {
+  const tbody = document.getElementById('lg-tbody');
+  tbody.innerHTML = leagueTeams.map((t,i)=>`<tr id="lgr-${i}">
+    <td class="num-cell">${i+1}</td>
+    <td><span class="tier-badge tier-${t.tier}">${t.tier}</span></td>
+    <td><input type="text" value="${t.city}" onchange="leagueTeams[${i}].city=this.value;leagueTeams[${i}].name=leagueTeams[${i}].city+' '+leagueTeams[${i}].nick" style="min-width:90px"></td>
+    <td><input type="text" value="${t.nick}" onchange="leagueTeams[${i}].nick=this.value;leagueTeams[${i}].name=leagueTeams[${i}].city+' '+leagueTeams[${i}].nick" style="min-width:90px"></td>
+    <td><input type="text" value="${t.abbr}" onchange="leagueTeams[${i}].abbr=this.value.toUpperCase().slice(0,4)" maxlength="4" style="min-width:50px;text-transform:uppercase"></td>
+    <td>
+      <select onchange="leagueTeams[${i}].conf=this.value" style="padding:4px 6px;font-size:0.82rem">
+        <option ${t.conf==='AFC'?'selected':''}>AFC</option>
+        <option ${t.conf==='NFC'?'selected':''}>NFC</option>
+        <option ${t.conf==='—'?'selected':''}>—</option>
+      </select>
+    </td>
+    <td class="num-cell"><input type="number" value="${t.off}" min="4" max="21" onchange="leagueTeams[${i}].off=Math.max(4,Math.min(21,+this.value))" style="width:54px;text-align:center;font-weight:700"></td>
+    <td class="num-cell"><input type="number" value="${t.def}" min="4" max="21" onchange="leagueTeams[${i}].def=Math.max(4,Math.min(21,+this.value))" style="width:54px;text-align:center;font-weight:700"></td>
+    <td class="num-cell"><input type="number" value="${t.cgf}" min="0" max="12" onchange="leagueTeams[${i}].cgf=Math.max(0,Math.min(12,+this.value))" style="width:54px;text-align:center;font-weight:700"></td>
+    <td><button class="del-btn" onclick="leagueTeams.splice(${i},1);renderLeague()" title="Remove">✕</button></td>
+  </tr>`).join('');
+}
+
+function addLeagueToRoster() {
+  leagueTeams.forEach(t=>roster.push({...t}));
+  renderRoster();
+  showTabByName('single');
+  alert(`${leagueTeams.length} teams added to your roster.`);
+}
+
+function clearLeague() {
+  if (!leagueTeams.length) return;
+  if (confirm('Clear the generated league?')) {
+    leagueTeams = [];
+    document.getElementById('lg-teams-card').style.display = 'none';
+  }
+}
+
+function showTabByName(name) {
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('show');
+  const tabs = document.querySelectorAll('.tab');
+  const map = {single:0, league:1, rules:2};
+  if (map[name]!==undefined) tabs[map[name]].classList.add('active');
+}
+
+// ─── Rules tier table ─────────────────────────────────────────────────
+function buildRulesTierTable() {
+  const sizes = [8,12,16,20,28,32];
+  const tbody = document.getElementById('rules-tier-table');
+  tbody.innerHTML = sizes.map(n=>{
+    const t = leagueTiers(n);
+    return `<tr style="${n%16===0?'':'background:var(--surface2)'}">
+      <td style="padding:7px;color:var(--text);font-weight:600">${n}</td>
+      <td style="padding:7px;text-align:center;color:var(--elite);font-weight:600">${t.Elite}</td>
+      <td style="padding:7px;text-align:center;color:var(--strong);font-weight:600">${t.Strong}</td>
+      <td style="padding:7px;text-align:center;color:var(--average);font-weight:600">${t.Average}</td>
+      <td style="padding:7px;text-align:center;color:var(--weak);font-weight:600">${t.Weak}</td>
+      <td style="padding:7px;text-align:center;color:var(--basement);font-weight:600">${t.Basement}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────
+updateSingleRef();
+buildAllRefGrid();
+updateLeagueTiers();
+buildRulesTierTable();
+</script>
+</body>
+</html>

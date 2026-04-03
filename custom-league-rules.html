@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Quick Play Football — Custom & Fantasy League Rules</title>
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 11pt;
+    color: #1a1a2e;
+    background: #fff;
+    line-height: 1.55;
+  }
+
+  /* ── Page Layout ── */
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 18mm 16mm 16mm;
+    background: #fff;
+  }
+
+  /* ── Cover Page ── */
+  .cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 297mm;
+    background: #0d1b2a;
+    color: #fff;
+    padding: 30mm 20mm;
+  }
+  .cover-badge {
+    font-size: 9pt;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #c9a84c;
+    margin-bottom: 18px;
+    font-family: Arial, sans-serif;
+  }
+  .cover-title {
+    font-size: 34pt;
+    font-weight: bold;
+    line-height: 1.15;
+    color: #f0e6c8;
+    margin-bottom: 10px;
+  }
+  .cover-sub {
+    font-size: 13pt;
+    color: #c9a84c;
+    letter-spacing: 1px;
+    margin-bottom: 40px;
+  }
+  .cover-divider {
+    width: 120px;
+    height: 3px;
+    background: #c9a84c;
+    margin: 0 auto 36px;
+  }
+  .cover-tagline {
+    font-size: 11pt;
+    color: #a8b4c0;
+    max-width: 320px;
+    line-height: 1.7;
+    font-style: italic;
+  }
+  .cover-sections {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+    font-family: Arial, sans-serif;
+    font-size: 9.5pt;
+    color: #c9a84c;
+  }
+  .cover-sections span { letter-spacing: 1px; }
+  .cover-footer {
+    position: absolute;
+    bottom: 18mm;
+    font-size: 8pt;
+    color: #4a5a6a;
+    font-family: Arial, sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── Section Pages ── */
+  .section-header {
+    background: #0d1b2a;
+    color: #f0e6c8;
+    padding: 12px 18px;
+    margin-bottom: 22px;
+    border-left: 5px solid #c9a84c;
+  }
+  .section-header .section-num {
+    font-size: 8pt;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #c9a84c;
+    font-family: Arial, sans-serif;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .section-header h2 {
+    font-size: 18pt;
+    font-weight: bold;
+  }
+
+  /* ── Typography ── */
+  h3 {
+    font-size: 12pt;
+    color: #0d1b2a;
+    border-bottom: 2px solid #c9a84c;
+    padding-bottom: 4px;
+    margin: 22px 0 10px;
+  }
+  p { margin-bottom: 10px; }
+  .lead {
+    font-size: 11.5pt;
+    color: #334;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9.5pt;
+    margin-bottom: 18px;
+    font-family: Arial, sans-serif;
+  }
+  thead th {
+    background: #0d1b2a;
+    color: #f0e6c8;
+    padding: 6px 8px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 8.5pt;
+    letter-spacing: 0.5px;
+  }
+  thead th.left { text-align: left; }
+  tbody tr:nth-child(even) { background: #f4f0e8; }
+  tbody tr:nth-child(odd)  { background: #fff; }
+  tbody td {
+    padding: 5px 8px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+  }
+  tbody td.left { text-align: left; }
+  tbody td.gold { color: #8a6a00; font-weight: bold; }
+  tbody td.highlight { background: #fff8e1; font-weight: bold; }
+  .table-caption {
+    font-size: 8pt;
+    color: #666;
+    font-style: italic;
+    margin-top: -14px;
+    margin-bottom: 16px;
+    font-family: Arial, sans-serif;
+  }
+
+  /* ── Pool Grid ── */
+  .pool-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px 6px;
+    margin-bottom: 16px;
+  }
+  .pool-item {
+    background: #f4f0e8;
+    border: 1px solid #ddd;
+    padding: 4px 6px;
+    font-size: 8.5pt;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    color: #1a1a2e;
+  }
+  .pool-item .num {
+    display: block;
+    font-size: 7pt;
+    color: #c9a84c;
+    font-weight: bold;
+  }
+
+  /* ── Callout Boxes ── */
+  .callout {
+    border-left: 4px solid #c9a84c;
+    background: #fff8e1;
+    padding: 10px 14px;
+    margin: 14px 0;
+    font-family: Arial, sans-serif;
+    font-size: 9.5pt;
+  }
+  .callout strong { color: #0d1b2a; }
+  .callout.navy {
+    border-left-color: #0d1b2a;
+    background: #eef2f6;
+  }
+
+  /* ── Dice Notation ── */
+  .dice {
+    display: inline-block;
+    background: #0d1b2a;
+    color: #c9a84c;
+    font-family: Arial, sans-serif;
+    font-size: 9pt;
+    font-weight: bold;
+    padding: 1px 7px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Stat Badge ── */
+  .stat-badge {
+    display: inline-block;
+    border: 2px solid #0d1b2a;
+    padding: 2px 10px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    font-size: 9.5pt;
+    margin-right: 6px;
+    background: #f4f0e8;
+  }
+
+  /* ── Class Tags ── */
+  .cls {
+    display: inline-block;
+    background: #0d1b2a;
+    color: #c9a84c;
+    font-weight: bold;
+    font-size: 9pt;
+    padding: 1px 6px;
+    font-family: Arial, sans-serif;
+    border-radius: 2px;
+    margin: 1px;
+  }
+
+  /* ── Print ── */
+  @media print {
+    @page { size: A4; margin: 0; }
+    body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .page-break { page-break-before: always; }
+    .no-break { page-break-inside: avoid; }
+  }
+
+  /* ── Ref table font shrink for wide tables ── */
+  .ref-table { font-size: 8pt; }
+  .ref-table thead th { padding: 5px 4px; font-size: 7.5pt; }
+  .ref-table tbody td { padding: 4px 4px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     COVER PAGE
+═══════════════════════════════════════════════ -->
+<div class="page cover" style="position:relative;">
+  <div class="cover-badge">Quick Play Football</div>
+  <div class="cover-title">Custom &amp; Fantasy<br>League Rules</div>
+  <div class="cover-sub">Team Creation · Name Generators · Rating System · League Builder</div>
+  <div class="cover-divider"></div>
+  <div class="cover-tagline">
+    Build your own teams, roll your own ratings,<br>
+    and run your own season — from scratch.
+  </div>
+  <div class="cover-sections">
+    <span>01 — Team Name Generator</span>
+    <span>02 — The Rating System</span>
+    <span>03 — Team Tiers &amp; Stat Rolling</span>
+    <span>04 — League Builder</span>
+    <span>05 — Complete Reference Tables</span>
+    <span>06 — Fantasy Draft Mode</span>
+  </div>
+  <div class="cover-footer">Custom League Edition · tabletop dice rules</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 1 — TEAM NAME GENERATOR
+═══════════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <span class="section-num">Section 01</span>
+    <h2>Team Name Generator</h2>
+  </div>
+
+  <p class="lead">Every custom team needs a name. Roll dice against the City and Nickname pools below, or pick manually. Combine them to create your franchise.</p>
+
+  <h3>How It Works</h3>
+  <p>A team name is built from two parts: a <strong>City</strong> and a <strong>Nickname</strong>. Roll once on each pool, combine the results, then create a 2–3 letter abbreviation using the initials.</p>
+
+  <div class="callout">
+    <strong>Example:</strong> Roll 1d35 → result 18 → <em>Lakefield</em>. Roll 1d45 → result 47 → <em>Wolves</em>. Team name: <strong>Lakefield Wolves (LW)</strong>.
+  </div>
+
+  <div class="callout navy">
+    <strong>Abbreviation Rule:</strong> Use the first letter of each word. Two-word names = 2 letters (LW). Three-word names = 3 letters (e.g. "New Cascade Storm" → NCS). Keep abbreviations unique within your league.
+  </div>
+
+  <h3>City Pool — Roll 1d35</h3>
+  <div class="pool-grid">
+    <div class="pool-item"><span class="num">1</span>Ashford</div>
+    <div class="pool-item"><span class="num">2</span>Bayside</div>
+    <div class="pool-item"><span class="num">3</span>Brookfield</div>
+    <div class="pool-item"><span class="num">4</span>Cascade</div>
+    <div class="pool-item"><span class="num">5</span>Clearwater</div>
+    <div class="pool-item"><span class="num">6</span>Crestwood</div>
+    <div class="pool-item"><span class="num">7</span>Crossroads</div>
+    <div class="pool-item"><span class="num">8</span>Eastport</div>
+    <div class="pool-item"><span class="num">9</span>Elmwood</div>
+    <div class="pool-item"><span class="num">10</span>Fairfield</div>
+    <div class="pool-item"><span class="num">11</span>Glenbrook</div>
+    <div class="pool-item"><span class="num">12</span>Glendale</div>
+    <div class="pool-item"><span class="num">13</span>Harborview</div>
+    <div class="pool-item"><span class="num">14</span>Hartland</div>
+    <div class="pool-item"><span class="num">15</span>Hillcrest</div>
+    <div class="pool-item"><span class="num">16</span>Ironwood</div>
+    <div class="pool-item"><span class="num">17</span>Kingston</div>
+    <div class="pool-item"><span class="num">18</span>Lakefield</div>
+    <div class="pool-item"><span class="num">19</span>Lakewood</div>
+    <div class="pool-item"><span class="num">20</span>Maplewood</div>
+    <div class="pool-item"><span class="num">21</span>Millbrook</div>
+    <div class="pool-item"><span class="num">22</span>Millhaven</div>
+    <div class="pool-item"><span class="num">23</span>Northgate</div>
+    <div class="pool-item"><span class="num">24</span>Oakdale</div>
+    <div class="pool-item"><span class="num">25</span>Pinehurst</div>
+    <div class="pool-item"><span class="num">26</span>Queensbury</div>
+    <div class="pool-item"><span class="num">27</span>Ridgecrest</div>
+    <div class="pool-item"><span class="num">28</span>Riverside</div>
+    <div class="pool-item"><span class="num">29</span>Rockford</div>
+    <div class="pool-item"><span class="num">30</span>Silverdale</div>
+    <div class="pool-item"><span class="num">31</span>Southport</div>
+    <div class="pool-item"><span class="num">32</span>Springdale</div>
+    <div class="pool-item"><span class="num">33</span>Stonehaven</div>
+    <div class="pool-item"><span class="num">34</span>Westbrook</div>
+    <div class="pool-item"><span class="num">35</span>Windmere</div>
+  </div>
+
+  <h3>Nickname Pool — Roll 1d45</h3>
+  <p>For 1d45: roll 1d6 for the tens digit (1–4 = use as-is, 5–6 = 40+1d5), or simply use any random number 1–45.</p>
+  <div class="pool-grid">
+    <div class="pool-item"><span class="num">1</span>Armada</div>
+    <div class="pool-item"><span class="num">2</span>Barons</div>
+    <div class="pool-item"><span class="num">3</span>Blaze</div>
+    <div class="pool-item"><span class="num">4</span>Bolts</div>
+    <div class="pool-item"><span class="num">5</span>Brawlers</div>
+    <div class="pool-item"><span class="num">6</span>Bulldogs</div>
+    <div class="pool-item"><span class="num">7</span>Chargers</div>
+    <div class="pool-item"><span class="num">8</span>Clash</div>
+    <div class="pool-item"><span class="num">9</span>Cobras</div>
+    <div class="pool-item"><span class="num">10</span>Condors</div>
+    <div class="pool-item"><span class="num">11</span>Coyotes</div>
+    <div class="pool-item"><span class="num">12</span>Crushers</div>
+    <div class="pool-item"><span class="num">13</span>Eagles</div>
+    <div class="pool-item"><span class="num">14</span>Enforcers</div>
+    <div class="pool-item"><span class="num">15</span>Express</div>
+    <div class="pool-item"><span class="num">16</span>Falcons</div>
+    <div class="pool-item"><span class="num">17</span>Fire</div>
+    <div class="pool-item"><span class="num">18</span>Force</div>
+    <div class="pool-item"><span class="num">19</span>Giants</div>
+    <div class="pool-item"><span class="num">20</span>Grizzlies</div>
+    <div class="pool-item"><span class="num">21</span>Hawks</div>
+    <div class="pool-item"><span class="num">22</span>Hornets</div>
+    <div class="pool-item"><span class="num">23</span>Invaders</div>
+    <div class="pool-item"><span class="num">24</span>Ironmen</div>
+    <div class="pool-item"><span class="num">25</span>Jaguars</div>
+    <div class="pool-item"><span class="num">26</span>Knights</div>
+    <div class="pool-item"><span class="num">27</span>Lancers</div>
+    <div class="pool-item"><span class="num">28</span>Legends</div>
+    <div class="pool-item"><span class="num">29</span>Lions</div>
+    <div class="pool-item"><span class="num">30</span>Lynx</div>
+    <div class="pool-item"><span class="num">31</span>Marshals</div>
+    <div class="pool-item"><span class="num">32</span>Monarchs</div>
+    <div class="pool-item"><span class="num">33</span>Phantoms</div>
+    <div class="pool-item"><span class="num">34</span>Pioneers</div>
+    <div class="pool-item"><span class="num">35</span>Raiders</div>
+    <div class="pool-item"><span class="num">36</span>Rangers</div>
+    <div class="pool-item"><span class="num">37</span>Ravens</div>
+    <div class="pool-item"><span class="num">38</span>Renegades</div>
+    <div class="pool-item"><span class="num">39</span>Rhinos</div>
+    <div class="pool-item"><span class="num">40</span>Sentinels</div>
+    <div class="pool-item"><span class="num">41</span>Sharks</div>
+    <div class="pool-item"><span class="num">42</span>Stallions</div>
+    <div class="pool-item"><span class="num">43</span>Storm</div>
+    <div class="pool-item"><span class="num">44</span>Thunder</div>
+    <div class="pool-item"><span class="num">45</span>Titans</div>
+  </div>
+  <p style="font-size:9pt;color:#666;font-family:Arial,sans-serif;margin-top:-10px;">Additional nicknames available: Vipers (46), Warlords (47), Wolves (48) — extend the pool as needed.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 2 — THE RATING SYSTEM
+═══════════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <span class="section-num">Section 02</span>
+    <h2>The Rating System</h2>
+  </div>
+
+  <p class="lead">Every Quick Play Football team is defined by three numbers. These ratings determine how often a team scores, how well they suppress opponents, and how they perform in close games.</p>
+
+  <h3>The Three Stats</h3>
+  <table>
+    <thead>
+      <tr>
+        <th class="left">Stat</th>
+        <th class="left">Range</th>
+        <th class="left">What It Does</th>
+        <th class="left">High = Better?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="left"><strong>OFF (Offense)</strong></td>
+        <td>4 – 21</td>
+        <td class="left">Added to opponent's DEF to determine your team's Class for each matchup. Higher OFF means a better class and more scoring potential.</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td class="left"><strong>DEF (Defense)</strong></td>
+        <td>4 – 21</td>
+        <td class="left">Used as the opponent's modifier. Your DEF is subtracted when working out the opponent's class. Higher DEF suppresses opposing offenses.</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td class="left"><strong>CGF (Close Game Factor)</strong></td>
+        <td>0 – 12</td>
+        <td class="left">Applied when the final margin is ≤8 points. Modifies the trailing team's last-possession roll. Higher CGF = better clutch performance.</td>
+        <td>Yes</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>How Class is Calculated:</strong> Your Class for a given game = your OFF + opponent's DEF + home/away modifier (home: +2, away: −2, neutral: 0). Look up the total on the Class Threshold table below.
+  </div>
+
+  <h3>The Class System</h3>
+  <p>Class is the in-game tier derived from your matchup total. It determines which row of the Scoring Chart you use each possession.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Class</th>
+        <th>Total Points (OFF + Opp DEF + modifier)</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="cls">AA</span></td><td>39 or more</td><td class="left">Elite — dominant scorers, high ceiling</td></tr>
+      <tr><td><span class="cls">A</span></td><td>34 – 38</td><td class="left">Strong — above average, consistent scoring</td></tr>
+      <tr><td><span class="cls">B</span></td><td>29 – 33</td><td class="left">Average — competitive, balanced output</td></tr>
+      <tr><td><span class="cls">C</span></td><td>25 – 28</td><td class="left">Below average — workable but limited</td></tr>
+      <tr><td><span class="cls">D</span></td><td>22 – 24</td><td class="left">Weak — struggles offensively</td></tr>
+      <tr><td><span class="cls">E</span></td><td>19 – 21</td><td class="left">Poor — low scoring ceilings</td></tr>
+      <tr><td><span class="cls">F</span></td><td>16 – 18</td><td class="left">Very poor — frequent shutout results</td></tr>
+      <tr><td><span class="cls">G</span></td><td>12 – 15</td><td class="left">Basement level — minimal scoring</td></tr>
+      <tr><td><span class="cls">H</span></td><td>7 – 11</td><td class="left">Bottom tier — rare scores only</td></tr>
+      <tr><td><span class="cls">Z</span></td><td>6 or less</td><td class="left">Rock bottom — almost no scoring chances</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Worked Example</h3>
+  <div class="callout navy no-break">
+    <strong>Team A (Lakefield Wolves):</strong> OFF 16, DEF 13, CGF 8<br>
+    <strong>Team B (Riverside Storm):</strong> OFF 11, DEF 15, CGF 5<br><br>
+    <strong>Wolves' class (home):</strong> Wolves OFF (16) + Storm DEF (15) + home (2) = <strong>33 → Class B</strong><br>
+    <strong>Storm's class (away):</strong> Storm OFF (11) + Wolves DEF (13) − away (2) = <strong>22 → Class D</strong><br><br>
+    Wolves use the B row on the Scoring Chart each possession. Storm uses the D row.
+  </div>
+
+  <h3>Score Result Codes</h3>
+  <p>Scoring Chart results use shorthand codes:</p>
+  <table>
+    <thead>
+      <tr><th class="left">Code</th><th class="left">Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="left"><strong>Number (e.g. 7, 14, 21)</strong></td><td class="left">Points scored this possession</td></tr>
+      <tr><td class="left"><strong>0</strong></td><td class="left">No score</td></tr>
+      <tr><td class="left"><strong>0/3</strong></td><td class="left">No score (or field goal if using optional rules)</td></tr>
+      <tr><td class="left"><strong>7*</strong></td><td class="left">7 points — Clock Killer applies if team leads by 31+</td></tr>
+      <tr><td class="left"><strong>X</strong></td><td class="left">Reroll — use the X Chart and XF/XC rules (see Section 05)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 3 — TEAM TIERS & STAT ROLLING
+═══════════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <span class="section-num">Section 03</span>
+    <h2>Team Tiers &amp; Stat Rolling</h2>
+  </div>
+
+  <p class="lead">When creating a custom team, you first assign a Tier — which sets the team's competitive level. Then roll dice to generate the exact stats within that tier's range.</p>
+
+  <h3>The Five Tiers</h3>
+  <table>
+    <thead>
+      <tr>
+        <th class="left">Tier</th>
+        <th>OFF Mod</th>
+        <th>DEF Mod</th>
+        <th>CGF Mod</th>
+        <th class="left">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="left"><strong>Elite</strong></td>
+        <td class="gold">+9</td><td class="gold">+9</td><td class="gold">+6</td>
+        <td class="left">Championship contenders. Top of the league, perennial favourites.</td>
+      </tr>
+      <tr>
+        <td class="left"><strong>Strong</strong></td>
+        <td class="gold">+6</td><td class="gold">+6</td><td class="gold">+4</td>
+        <td class="left">Playoff-calibre. Consistent, competitive, dangerous in the right matchup.</td>
+      </tr>
+      <tr>
+        <td class="left"><strong>Average</strong></td>
+        <td class="gold">+3</td><td class="gold">+3</td><td class="gold">+2</td>
+        <td class="left">.500 teams. Capable of beating anyone, but won't dominate.</td>
+      </tr>
+      <tr>
+        <td class="left"><strong>Weak</strong></td>
+        <td class="gold">+0</td><td class="gold">+0</td><td class="gold">+1</td>
+        <td class="left">Rebuilding. Gets outclassed often, but has occasional bright spots.</td>
+      </tr>
+      <tr>
+        <td class="left"><strong>Basement</strong></td>
+        <td class="gold">−2</td><td class="gold">−2</td><td class="gold">+0</td>
+        <td class="left">Bottom dwellers. Rare wins, limited scoring, no CGF help.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Rolling Stats</h3>
+  <p>Each stat is rolled separately with the following dice, then the tier modifier is added:</p>
+
+  <table class="no-break">
+    <thead>
+      <tr>
+        <th class="left">Stat</th>
+        <th class="left">Roll</th>
+        <th class="left">Add Modifier</th>
+        <th class="left">Clamp Range</th>
+        <th class="left">Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="left"><strong>OFF</strong></td>
+        <td class="left"><span class="dice">2d6</span></td>
+        <td class="left">+ tier OFF mod</td>
+        <td class="left">4 – 21</td>
+        <td class="left">Bell curve: 7 is most likely result on 2d6</td>
+      </tr>
+      <tr>
+        <td class="left"><strong>DEF</strong></td>
+        <td class="left"><span class="dice">2d6</span></td>
+        <td class="left">+ tier DEF mod</td>
+        <td class="left">4 – 21</td>
+        <td class="left">Rolled independently — OFF and DEF can differ</td>
+      </tr>
+      <tr>
+        <td class="left"><strong>CGF</strong></td>
+        <td class="left"><span class="dice">1d6</span></td>
+        <td class="left">+ tier CGF mod</td>
+        <td class="left">0 – 12</td>
+        <td class="left">Single die — less variance, more predictable</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Clamping:</strong> If the roll + modifier falls outside the valid range, clamp to the nearest limit. Example: Elite team rolls 2 on 2d6 for OFF (2 + 9 = 11) — valid. Rolls 12 (12 + 9 = 21) — clamped to 21. Basement rolls 2 (2 − 2 = 0) — clamped to 4.
+  </div>
+
+  <h3>Typical Results by Tier</h3>
+  <p style="font-size:9pt;color:#555;font-family:Arial,sans-serif;">Based on a median 2d6 roll of 7, and 1d6 roll of 3–4.</p>
+  <table>
+    <thead>
+      <tr>
+        <th class="left">Tier</th>
+        <th>Median OFF</th>
+        <th>Median DEF</th>
+        <th>Median CGF</th>
+        <th>Typical Class vs Average Opponent</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="left"><strong>Elite</strong></td><td>16</td><td>16</td><td>9–10</td><td><span class="cls">A</span> / <span class="cls">AA</span></td></tr>
+      <tr><td class="left"><strong>Strong</strong></td><td>13</td><td>13</td><td>7–8</td><td><span class="cls">B</span> / <span class="cls">A</span></td></tr>
+      <tr><td class="left"><strong>Average</strong></td><td>10</td><td>10</td><td>5–6</td><td><span class="cls">C</span> / <span class="cls">B</span></td></tr>
+      <tr><td class="left"><strong>Weak</strong></td><td>7</td><td>7</td><td>4</td><td><span class="cls">D</span> / <span class="cls">E</span></td></tr>
+      <tr><td class="left"><strong>Basement</strong></td><td>5</td><td>5</td><td>3</td><td><span class="cls">F</span> / <span class="cls">G</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Manual Assignment (Optional)</h3>
+  <p>If you prefer to assign stats rather than roll them, use these suggested ranges per tier:</p>
+  <table>
+    <thead>
+      <tr>
+        <th class="left">Tier</th>
+        <th>OFF Range</th>
+        <th>DEF Range</th>
+        <th>CGF Range</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="left"><strong>Elite</strong></td><td>14–21</td><td>14–21</td><td>8–12</td></tr>
+      <tr><td class="left"><strong>Strong</strong></td><td>11–16</td><td>11–16</td><td>6–10</td></tr>
+      <tr><td class="left"><strong>Average</strong></td><td>8–13</td><td>8–13</td><td>4–7</td></tr>
+      <tr><td class="left"><strong>Weak</strong></td><td>5–10</td><td>5–10</td><td>2–5</td></tr>
+      <tr><td class="left"><strong>Basement</strong></td><td>4–7</td><td>4–7</td><td>0–3</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 4 — LEAGUE BUILDER
+═══════════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <span class="section-num">Section 04</span>
+    <h2>League Builder</h2>
+  </div>
+
+  <p class="lead">A well-balanced custom league mirrors real-world distribution: a small elite, a large middle class, and a relegation-zone bottom. The formula below gives you that shape automatically.</p>
+
+  <h3>Tier Distribution Formula</h3>
+  <p>For any league of <em>N</em> teams, assign tiers using the following percentages (round up, then assign remainder to Average):</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="left">Tier</th>
+        <th>Target %</th>
+        <th>Rounding Rule</th>
+        <th class="left">Role</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="left"><strong>Elite</strong></td><td>~14%</td><td>Round up</td><td class="left">Title favourites</td></tr>
+      <tr><td class="left"><strong>Strong</strong></td><td>~21%</td><td>Round up</td><td class="left">Playoff contenders</td></tr>
+      <tr><td class="left"><strong>Average</strong></td><td>Remainder</td><td>—</td><td class="left">The competitive middle</td></tr>
+      <tr><td class="left"><strong>Weak</strong></td><td>~21%</td><td>Round up</td><td class="left">Fringe playoff / mid-table</td></tr>
+      <tr><td class="left"><strong>Basement</strong></td><td>~11%</td><td>Round up</td><td class="left">Cellar dwellers</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Pre-Calculated League Breakdowns</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>League Size</th>
+        <th>Elite</th>
+        <th>Strong</th>
+        <th>Average</th>
+        <th>Weak</th>
+        <th>Basement</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>4 teams</strong></td><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+      <tr><td><strong>6 teams</strong></td><td>1</td><td>1</td><td>2</td><td>1</td><td>1</td></tr>
+      <tr><td><strong>8 teams</strong></td><td>1</td><td>2</td><td>3</td><td>2</td><td>1</td></tr>
+      <tr><td><strong>10 teams</strong></td><td>2</td><td>2</td><td>3</td><td>2</td><td>1</td></tr>
+      <tr><td><strong>12 teams</strong></td><td>2</td><td>3</td><td>4</td><td>3</td><td>2</td></tr>
+      <tr><td><strong>16 teams</strong></td><td>2</td><td>3</td><td>7</td><td>3</td><td>2</td></tr>
+      <tr><td><strong>20 teams</strong></td><td>3</td><td>4</td><td>8</td><td>4</td><td>2</td></tr>
+      <tr><td><strong>24 teams</strong></td><td>3</td><td>5</td><td>10</td><td>5</td><td>3</td></tr>
+      <tr><td><strong>32 teams</strong></td><td>4</td><td>7</td><td>13</td><td>7</td><td>4</td></tr>
+    </tbody>
+  </table>
+  <p class="table-caption">Note: Small leagues (4–6 teams) compress the tiers. Basement may be 0 in very small leagues.</p>
+
+  <h3>Conference &amp; Division Setup</h3>
+  <p>For leagues of 8+ teams, consider organising into conferences and divisions. Suggested structures:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="left">League Size</th>
+        <th class="left">Suggested Structure</th>
+        <th class="left">Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="left">8 teams</td><td class="left">2 conferences × 4 teams</td><td class="left">Top 2 per conference make playoffs (4-team bracket)</td></tr>
+      <tr><td class="left">12 teams</td><td class="left">2 conferences × 2 divisions × 3 teams</td><td class="left">Division winners + 2 wild cards</td></tr>
+      <tr><td class="left">16 teams</td><td class="left">2 conferences × 2 divisions × 4 teams</td><td class="left">Standard NFL-style structure</td></tr>
+      <tr><td class="left">32 teams</td><td class="left">2 conferences × 4 divisions × 4 teams</td><td class="left">Full NFL mirror — 12-team playoff bracket</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Balancing Tips</h3>
+  <div class="callout navy no-break">
+    <strong>Tip 1 — Spread tiers across divisions.</strong> Avoid placing all Elite and Strong teams in one division — it creates an unbalanced schedule advantage.<br><br>
+    <strong>Tip 2 — Two-team tiers (Elite/Basement) work best at even numbers.</strong> One per conference keeps symmetry in title races and relegation battles.<br><br>
+    <strong>Tip 3 — Use random assignment.</strong> Roll 1d5 (Elite=1, Strong=2, Average=3, Weak=4, Basement=5), re-rolling if a tier is full. This prevents you unconsciously biasing your favourite team.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 5 — REFERENCE TABLES
+═══════════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <span class="section-num">Section 05</span>
+    <h2>Complete Reference Tables</h2>
+  </div>
+
+  <p class="lead">All game charts required for play. Print this section separately and keep it at the table.</p>
+
+  <h3>Scoring Chart (SC)</h3>
+  <p style="font-size:9pt;color:#555;font-family:Arial,sans-serif;margin-bottom:6px;">Roll 1d20 each possession. Find result in the column matching your team's Class.</p>
+
+  <table class="ref-table no-break">
+    <thead>
+      <tr>
+        <th>d20</th>
+        <th><span class="cls" style="font-size:7pt;">AA</span></th>
+        <th><span class="cls" style="font-size:7pt;">A</span></th>
+        <th><span class="cls" style="font-size:7pt;">B</span></th>
+        <th><span class="cls" style="font-size:7pt;">C</span></th>
+        <th><span class="cls" style="font-size:7pt;">D</span></th>
+        <th><span class="cls" style="font-size:7pt;">E</span></th>
+        <th><span class="cls" style="font-size:7pt;">F</span></th>
+        <th><span class="cls" style="font-size:7pt;">G</span></th>
+        <th><span class="cls" style="font-size:7pt;">H</span></th>
+        <th><span class="cls" style="font-size:7pt;">Z</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>21</td><td>7</td><td>10</td><td>7*</td><td>0</td><td>X</td><td>0/3</td><td>0</td><td>6</td><td>0</td></tr>
+      <tr><td>2</td><td>7</td><td>14</td><td>0/3</td><td>17</td><td>10</td><td>0</td><td>0</td><td>3</td><td>0</td><td>0</td></tr>
+      <tr><td>3</td><td>14</td><td>0</td><td>13</td><td>6</td><td>3</td><td>3</td><td>7*</td><td>0</td><td>0</td><td>0/3</td></tr>
+      <tr><td>4</td><td>7*</td><td>0/3</td><td>7</td><td>7*</td><td>14</td><td>7*</td><td>0</td><td>7</td><td>3</td><td>0</td></tr>
+      <tr><td>5</td><td>3</td><td>17</td><td>0</td><td>3</td><td>0</td><td>0</td><td>7</td><td>X</td><td>0</td><td>0</td></tr>
+      <tr><td>6</td><td>10</td><td>X</td><td>7</td><td>10</td><td>0/3</td><td>10</td><td>7</td><td>0</td><td>7*</td><td>0</td></tr>
+      <tr><td>7</td><td>0/3</td><td>10</td><td>7</td><td>0</td><td>7</td><td>0/3</td><td>7</td><td>0</td><td>X</td><td>0</td></tr>
+      <tr><td>8</td><td>14</td><td>17</td><td>6</td><td>7</td><td>6</td><td>8</td><td>14</td><td>0</td><td>0</td><td>6</td></tr>
+      <tr><td>9</td><td>7*</td><td>7*</td><td>17</td><td>0/3</td><td>0</td><td>3</td><td>3</td><td>0</td><td>0</td><td>0</td></tr>
+      <tr><td>10</td><td>7</td><td>6</td><td>7</td><td>7</td><td>7*</td><td>0</td><td>10</td><td>0</td><td>0</td><td>0</td></tr>
+      <tr><td>11</td><td>10</td><td>3</td><td>X</td><td>0</td><td>0</td><td>7</td><td>3</td><td>7*</td><td>0</td><td>X</td></tr>
+      <tr><td>12</td><td>24</td><td>7*</td><td>10</td><td>10</td><td>7*</td><td>6</td><td>0</td><td>7</td><td>7*</td><td>3</td></tr>
+      <tr><td>13</td><td>X</td><td>13</td><td>3</td><td>7</td><td>10</td><td>7*</td><td>7</td><td>0</td><td>0</td><td>0</td></tr>
+      <tr><td>14</td><td>13</td><td>7</td><td>7*</td><td>X</td><td>7</td><td>0</td><td>0</td><td>7</td><td>3</td><td>7*</td></tr>
+      <tr><td>15</td><td>17</td><td>21</td><td>0</td><td>14</td><td>3</td><td>7</td><td>0</td><td>0/3</td><td>0</td><td>3</td></tr>
+      <tr><td>16</td><td>3</td><td>7</td><td>17</td><td>0</td><td>0</td><td>7</td><td>7</td><td>3</td><td>7</td><td>0</td></tr>
+      <tr><td>17</td><td>7</td><td>7</td><td>14</td><td>7</td><td>X</td><td>10</td><td>6</td><td>0/3</td><td>0</td><td>0</td></tr>
+      <tr><td>18</td><td>7</td><td>7</td><td>7*</td><td>0</td><td>7</td><td>0</td><td>10</td><td>7</td><td>0</td><td>0</td></tr>
+      <tr><td>19</td><td>7</td><td>3</td><td>10</td><td>3</td><td>14</td><td>0</td><td>X</td><td>7*</td><td>0</td><td>0</td></tr>
+      <tr><td>20</td><td>6</td><td>10</td><td>3</td><td>13</td><td>7</td><td>7</td><td>0</td><td>6</td><td>7</td><td>0</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:8pt;font-family:Arial,sans-serif;color:#555;margin-top:-12px;margin-bottom:18px;"><strong>Key:</strong> X = reroll on X Chart &nbsp;|&nbsp; 7* = Clock Killer applies (31+ point leads) &nbsp;|&nbsp; 0/3 = 0 pts (field goal optional variant)</p>
+
+  <h3>X Chart (XC) — d20 Reroll for X Results</h3>
+  <p style="font-size:9pt;color:#555;font-family:Arial,sans-serif;margin-bottom:4px;">
+    When you roll X on the SC: <strong>d20 1–12</strong> → use fixed XF values below. <strong>d20 13–20</strong> → roll again on the XC table.
+  </p>
+
+  <div class="callout" style="margin-bottom:10px;">
+    <strong>XF (Fixed X Values, d20 1–12):</strong>
+    <span class="cls" style="font-size:8pt;">AA</span> 20 &nbsp;
+    <span class="cls" style="font-size:8pt;">A</span> 17 &nbsp;
+    <span class="cls" style="font-size:8pt;">B</span> 14 &nbsp;
+    <span class="cls" style="font-size:8pt;">C</span> 14 &nbsp;
+    <span class="cls" style="font-size:8pt;">D</span> 10 &nbsp;
+    <span class="cls" style="font-size:8pt;">E</span> 10 &nbsp;
+    <span class="cls" style="font-size:8pt;">F</span> 10 &nbsp;
+    <span class="cls" style="font-size:8pt;">G</span> 7 &nbsp;
+    <span class="cls" style="font-size:8pt;">H</span> 7 &nbsp;
+    <span class="cls" style="font-size:8pt;">Z</span> 7
+  </div>
+
+  <table class="ref-table no-break">
+    <thead>
+      <tr>
+        <th>d20 Reroll</th>
+        <th><span class="cls" style="font-size:7pt;">AA</span></th>
+        <th><span class="cls" style="font-size:7pt;">A</span></th>
+        <th><span class="cls" style="font-size:7pt;">B</span></th>
+        <th><span class="cls" style="font-size:7pt;">C</span></th>
+        <th><span class="cls" style="font-size:7pt;">D</span></th>
+        <th><span class="cls" style="font-size:7pt;">E</span></th>
+        <th><span class="cls" style="font-size:7pt;">F</span></th>
+        <th><span class="cls" style="font-size:7pt;">G</span></th>
+        <th><span class="cls" style="font-size:7pt;">H</span></th>
+        <th><span class="cls" style="font-size:7pt;">Z</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>13</td><td>28</td><td>20</td><td>17</td><td>13</td><td>20</td><td>9</td><td>9</td><td>17</td><td>6</td><td>6</td></tr>
+      <tr><td>14</td><td>31</td><td>27</td><td>9</td><td>17</td><td>14</td><td>20</td><td>10</td><td>6</td><td>7</td><td>7</td></tr>
+      <tr><td>15</td><td>14</td><td>5</td><td>21</td><td>16</td><td>14</td><td>3</td><td>6</td><td>7</td><td>10</td><td>7</td></tr>
+      <tr><td>16</td><td>2</td><td>14</td><td>14</td><td>20</td><td>13</td><td>5</td><td>10</td><td>7</td><td>5</td><td>7</td></tr>
+      <tr><td>17</td><td>21</td><td>28</td><td>2</td><td>10</td><td>13</td><td>21</td><td>10</td><td>7</td><td>7</td><td>2</td></tr>
+      <tr><td>18</td><td>20</td><td>21</td><td>17</td><td>13</td><td>13</td><td>14</td><td>2</td><td>7</td><td>7</td><td>9</td></tr>
+      <tr><td>19</td><td>9</td><td>2</td><td>20</td><td>14</td><td>13</td><td>14</td><td>10</td><td>7</td><td>7</td><td>10</td></tr>
+      <tr><td>20</td><td>21</td><td>9</td><td>17</td><td>14</td><td>21</td><td>14</td><td>20</td><td>7</td><td>7</td><td>7</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 5 cont. — CGF TABLE
+═══════════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header" style="margin-bottom:16px;">
+    <span class="section-num">Section 05 — Continued</span>
+    <h2>Close Game Factor (CGF) Results</h2>
+  </div>
+
+  <p class="lead">Used when the final regulation margin is ≤8 points. The trailing team gets a possession attempt modified by the CGF Roll.</p>
+
+  <h3>How to Use the CGF Chart</h3>
+  <div class="callout navy">
+    <strong>Step 1:</strong> Roll 2d6.<br>
+    <strong>Step 2:</strong> Add the trailing team's CGF rating.<br>
+    <strong>Step 3:</strong> Subtract the leading team's CGF rating.<br>
+    <strong>Step 4:</strong> Look up the modified total (range 2–28) in the table below.<br>
+    <strong>Step 5:</strong> Use the correct column based on the deficit:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;— <em>Tied or losing by 1–3</em> → Column A<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;— <em>Losing by 4–8</em> → Column B<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;— <em>Leading team's CGF is higher</em> → Column C (opponent counter-attempt chance)
+  </div>
+
+  <h3>CGF Results Map</h3>
+  <table class="no-break">
+    <thead>
+      <tr>
+        <th>Modified Roll</th>
+        <th class="left">Column A — Tied / Down 1–3</th>
+        <th class="left">Column B — Down 4–8</th>
+        <th class="left">Column C — Opp. CGF Higher</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>2</td><td class="left">No Chance</td><td class="left">No Chance</td><td class="left">No Chance</td></tr>
+      <tr><td>3</td><td class="left">No Chance</td><td class="left">TDA−7*</td><td class="left">No Chance</td></tr>
+      <tr><td>4</td><td class="left">No Chance</td><td class="left">TDA−6*</td><td class="left">No Chance</td></tr>
+      <tr><td>5</td><td class="left">FGA−8*</td><td class="left">TDA−5*</td><td class="left">OPP TD!</td></tr>
+      <tr><td>6</td><td class="left">FGA−7*</td><td class="left">TDA−4*</td><td class="left">No Chance</td></tr>
+      <tr><td>7</td><td class="left">FGA−6*</td><td class="left">TDA−3*</td><td class="left">No Chance</td></tr>
+      <tr><td>8</td><td class="left">FGA−5*</td><td class="left">TDA−2*</td><td class="left">No Chance</td></tr>
+      <tr><td>9</td><td class="left">FGA−3*</td><td class="left">TDA−1*</td><td class="left">FGA</td></tr>
+      <tr><td>10</td><td class="left">FGA−1*</td><td class="left">TDA*</td><td class="left">FGA+2</td></tr>
+      <tr><td>11</td><td class="left">FGA*</td><td class="left">TDA*</td><td class="left">FGA+3</td></tr>
+      <tr><td>12</td><td class="left">FGA+1*</td><td class="left">TDA*</td><td class="left">FGA+4</td></tr>
+      <tr><td>13</td><td class="left">Touchdown!*</td><td class="left">Touchdown!*</td><td class="left">Touchdown!</td></tr>
+      <tr><td>14</td><td class="left">TDA−1/FGA+2</td><td class="left">TDA</td><td class="left">Touchdown!</td></tr>
+      <tr><td>15</td><td class="left">TDA+2/FGA+2</td><td class="left">Touchdown!</td><td class="left">FGA+5</td></tr>
+      <tr><td>16</td><td class="left">TDA+3/FGA+4</td><td class="left">TDA+1</td><td class="left">FGA+6</td></tr>
+      <tr><td>17</td><td class="left">Touchdown!</td><td class="left">TDA+1</td><td class="left">Touchdown!</td></tr>
+      <tr><td>18</td><td class="left">FGA+4</td><td class="left">TDA+2</td><td class="left">FGA+6</td></tr>
+      <tr><td>19</td><td class="left">FGA+5</td><td class="left">TDA+2</td><td class="left">FGA+6</td></tr>
+      <tr><td>20</td><td class="left">FGA+6</td><td class="left">TDA+3</td><td class="left">FGA+6</td></tr>
+      <tr><td>21</td><td class="left">FGA+7</td><td class="left">TDA+4</td><td class="left">FGA+7</td></tr>
+      <tr><td>22</td><td class="left">FGA+7</td><td class="left">TDA+5</td><td class="left">FGA+7</td></tr>
+      <tr><td>23</td><td class="left">FGA+7</td><td class="left">TDA+6</td><td class="left">FGA+8</td></tr>
+      <tr><td>24</td><td class="left">FGA+8</td><td class="left">TDA+7</td><td class="left">Touchdown!</td></tr>
+      <tr><td>25</td><td class="left">Touchdown!</td><td class="left">TDA+8</td><td class="left">Touchdown!</td></tr>
+      <tr><td>26</td><td class="left">Touchdown!</td><td class="left">TDA+9</td><td class="left">Touchdown!</td></tr>
+      <tr><td>27</td><td class="left">Touchdown!</td><td class="left">TDA+10</td><td class="left">Touchdown!</td></tr>
+      <tr><td>28</td><td class="left">Touchdown!</td><td class="left">Touchdown!</td><td class="left">Touchdown!</td></tr>
+    </tbody>
+  </table>
+
+  <h3>CGF Result Codes</h3>
+  <table>
+    <thead>
+      <tr><th class="left">Code</th><th class="left">Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="left"><strong>Touchdown!</strong></td><td class="left">Score 7 points — trailing team takes the lead or ties (if down 7)</td></tr>
+      <tr><td class="left"><strong>TDA (Touchdown Attempt)</strong></td><td class="left">Roll 1d20 on the SC using the team's class; result is the final score add</td></tr>
+      <tr><td class="left"><strong>TDA±N</strong></td><td class="left">As TDA, but add or subtract N from the SC result</td></tr>
+      <tr><td class="left"><strong>FGA (Field Goal Attempt)</strong></td><td class="left">Roll 1d20 — result ≥7 scores 3 points</td></tr>
+      <tr><td class="left"><strong>FGA±N</strong></td><td class="left">As FGA, but add or subtract N from the roll threshold</td></tr>
+      <tr><td class="left"><strong>No Chance</strong></td><td class="left">No scoring opportunity — game ends</td></tr>
+      <tr><td class="left"><strong>OPP TD!</strong></td><td class="left">Opponent scores a defensive TD (rare — extreme deficit scenario)</td></tr>
+      <tr><td class="left"><strong>* (asterisk)</strong></td><td class="left">Opponent gets a counter-possession attempt after this result resolves</td></tr>
+      <tr><td class="left"><strong>A/B (slash)</strong></td><td class="left">Trailing team chooses which attempt to make</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 6 — FANTASY DRAFT MODE
+═══════════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <span class="section-num">Section 06</span>
+    <h2>Fantasy Draft Mode</h2>
+  </div>
+
+  <p class="lead">Don't want to roll entirely new teams? Use the historical team database as a draft pool. Over 100 years of real NFL, AFL, USFL, and other league data is available — all pre-rated and ready to play.</p>
+
+  <h3>What Is Fantasy Draft Mode?</h3>
+  <p>Fantasy Draft Mode lets you build a custom season using historical teams as your roster. You can mix eras — pit the 1994 Cowboys against the 1978 Steelers — or build a league from a single season. Each team's OFF, DEF, and CGF ratings reflect their historical performance, already calibrated for Quick Play Football.</p>
+
+  <h3>Data Available</h3>
+  <table>
+    <thead>
+      <tr>
+        <th class="left">League</th>
+        <th>Seasons Available</th>
+        <th>Teams per Season</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="left"><strong>NFL</strong></td><td>1946–2015</td><td>8–32</td></tr>
+      <tr><td class="left"><strong>AFL</strong></td><td>1960–1969</td><td>8–10</td></tr>
+      <tr><td class="left"><strong>AAFC</strong></td><td>1946–1949</td><td>7–8</td></tr>
+      <tr><td class="left"><strong>USFL</strong></td><td>1983–1985</td><td>8–18</td></tr>
+      <tr><td class="left"><strong>WFL</strong></td><td>1974–1975</td><td>11–12</td></tr>
+      <tr><td class="left"><strong>XFL</strong></td><td>2001</td><td>8</td></tr>
+      <tr><td class="left"><strong>NFL Europe / WLAF</strong></td><td>1991–2007</td><td>6–10</td></tr>
+      <tr><td class="left"><strong>UFL / FXFL</strong></td><td>2009–2014</td><td>4–5</td></tr>
+    </tbody>
+  </table>
+
+  <h3>How to Run a Fantasy Draft</h3>
+
+  <div class="callout navy no-break">
+    <strong>Step 1 — Open the Season Browser</strong><br>
+    Open <em>fantasy-season.html</em> in your browser. Browse available seasons by league and year.
+  </div>
+  <div class="callout navy no-break">
+    <strong>Step 2 — Pick Your Pool</strong><br>
+    Select a league or season as your draft pool. The browser shows each team's name, abbreviation, OFF, DEF, and CGF ratings.
+  </div>
+  <div class="callout navy no-break">
+    <strong>Step 3 — Draft or Auto-Assign</strong><br>
+    <em>Snake draft:</em> Managers take turns picking teams in alternating order.<br>
+    <em>Random:</em> Shuffle all teams and deal them out equally.<br>
+    <em>Auction:</em> Each manager gets 100 points to bid on teams.
+  </div>
+  <div class="callout navy no-break">
+    <strong>Step 4 — Import to Simulator</strong><br>
+    Open <em>index.html</em> and select teams from the loaded dataset to play matchups. Or use the Team Creator (<em>teamcreator.html</em>) to export your drafted league as a custom dataset.
+  </div>
+
+  <h3>Mix-Era Rules</h3>
+  <p>When mixing teams from different eras, use the following optional adjustments to keep games competitive:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="left">Era</th>
+        <th class="left">Period</th>
+        <th class="left">Modifier Suggestion</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="left"><strong>Modern</strong></td><td class="left">2000–2015</td><td class="left">No modifier — use as rated</td></tr>
+      <tr><td class="left"><strong>Mid-era</strong></td><td class="left">1975–1999</td><td class="left">+1 DEF (defensive football era)</td></tr>
+      <tr><td class="left"><strong>Classic</strong></td><td class="left">1946–1974</td><td class="left">−1 OFF, +1 CGF (ground game era)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>All-Time Fantasy League:</strong> For the definitive time-travel league, take the best team from each decade (1950s, 60s, 70s, 80s, 90s, 00s, 10s) and run a 7-team round-robin to find the greatest team in history.
+  </div>
+
+  <h3>Quick Reference — Team Sheet</h3>
+  <p style="font-size:9pt;font-family:Arial,sans-serif;color:#555;">Use this blank sheet to record your drafted teams. Photocopy as needed.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th class="left">Team Name</th>
+        <th>Abbr.</th>
+        <th>Tier</th>
+        <th>OFF</th>
+        <th>DEF</th>
+        <th>CGF</th>
+        <th class="left">Conference / Division</th>
+        <th class="left">Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>2</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>3</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>4</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>5</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>6</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>7</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>8</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>9</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>10</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>11</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>12</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>13</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>14</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>15</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>16</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>17</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>18</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>19</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>20</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>21</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>22</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>23</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>24</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>25</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>26</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>27</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>28</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>29</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>30</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>31</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>32</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
